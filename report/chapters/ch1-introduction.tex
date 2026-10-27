@@ -1,0 +1,332 @@
+%=============================================================================
+\chapter{Introduction}\label{chap:introduction}
+%=============================================================================
+
+\section{Definition and Characteristics of Swarm Robotics}\label{sec:definition}
+
+Swarm robotics is an interdisciplinary approach inspired by social insects (such
+as ants, bees, and termites) and by groups of vertebrates (such as bird flocks
+and fish schools), in which a large number of simple robots achieve complex group
+behaviors through local interactions. Swarm robotics is concerned with
+engineering large-scale collective behaviors that, by exploiting the
+self-organization of simple agents, yield robust, scalable, and flexible systems
+\cite{dias2021swarm,li2021research}. As shown in \cref{fig:swarm-position}, swarm robotics is a subset of
+multi-robot systems.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.55\linewidth]{swarm-robotics-position}
+  \caption{The position of swarm robotics within mobile and multi-robot systems.}
+  \label{fig:swarm-position}
+\end{figure}
+
+\subsection{Definition of Swarm Robotics}
+
+Swarm robotics coordinates large populations of relatively simple, physically
+embodied robots so that desired macroscopic behaviors emerge from local
+robot--robot and robot--environment interactions, without centralized control.
+The design approach in swarm robotics focuses on scalability, flexibility, and
+robustness, and relies on local sensing and communication combined with
+distributed autonomy \cite{dias2021swarm,li2021research}.
+
+\subsubsection{Study of Collective Intelligence in Robot Groups}
+
+Swarm robotics studies how a group of simple robots, relying on emergent
+collective intelligence, can cooperatively accomplish tasks that are beyond the
+capabilities of any single robot \cite{li2021research}:
+\begin{itemize}
+  \item \lead{Emergent behavior} Complex behaviors such as aggregation,
+        dispersion, and collective flight arise spontaneously from simple local
+        rules and give the swarm capabilities that exceed those of the individual.
+  \item \lead{Simple agents} Swarm robots are typically homogeneous and of low
+        complexity, with minimal on-board storage and computation, and they rely
+        on coordination to achieve complex goals collectively.
+  \item \lead{Minimal control} The swarm operates with little or no human
+        guidance and achieves decentralized autonomy by following simple
+        cooperative rules.
+\end{itemize}
+
+\subsubsection{Merging Swarm Intelligence with Robotics}
+
+Swarm robotics implements the principles of swarm intelligence in embodied
+robotic teams under a fully distributed control paradigm derived from
+nature-inspired, decentralized decision-making \cite{dias2021swarm,nguyen2024swarm}:
+\begin{itemize}
+  \item \lead{The swarm intelligence paradigm} It employs decentralized,
+        self-organized systems to solve complex problems and provides the
+        computational techniques and inspiration needed for robust collective
+        behavior in robotics.
+  \item \lead{Swarm intelligence in applied robotics} Nature-inspired models are
+        turned into coordination and task-allocation algorithms that can be
+        implemented on robot swarms.
+  \item \lead{Decentralized coordination} Purely local sensing and
+        communication, together with distributed decisions, eliminate single
+        points of failure and allow the system to grow to large teams while
+        maintaining performance.
+\end{itemize}
+
+\subsection{Inspiration from Nature}
+
+Drawing on nature, and based on observations and mathematical models of
+biological swarms, this field engineers corresponding coordination and
+problem-solving mechanisms for robotics. The success of natural systems in
+solving complex tasks in a decentralized manner provides templates for robust
+and adaptive robotic collectives. Examples of this phenomenon are shown in
+\cref{fig:nature} \cite{li2021research}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.78\linewidth]{nature-examples}
+  \caption{Examples of collective behavior in nature: ants, birds, fish, and a
+           herd of wildebeest.}
+  \label{fig:nature}
+\end{figure}
+
+\subsection{Key Characteristics of Swarm Robotic Systems}
+
+Swarm robotic systems prioritize autonomy, decentralization, scalability,
+robustness, flexibility, and limited individual capabilities, so that high
+performance arises from a collective of simple components rather than from a few
+complex units \cite{dias2021swarm}.
+
+\subsubsection{Self-Organization and Decentralization}
+
+Swarm robotics dispenses with centralized control: each robot acts autonomously
+based on local sensing and interaction with its neighbors, and global behaviors
+emerge from repeated local exchanges \cite{dias2021swarm}.
+\begin{itemize}
+  \item \lead{Decentralized control} There is no leader or central authority.
+  \item \lead{Self-organization} Complex global patterns form through local
+        interactions among simple robots and adapt to environmental cues and
+        task demands.
+\end{itemize}
+
+\subsubsection{Robustness, Scalability, and Flexibility}
+
+These traits are the main advantages of adopting a swarm approach in dynamic and
+uncertain environments that call for redundancy and adaptability \cite{tripathy2020review}.
+\begin{itemize}
+  \item \lead{Robustness} Redundancy and distribution allow operation to continue
+        despite disturbances or failures of individuals, so that performance
+        degrades gracefully.
+  \item \lead{Scalability} Enforcing local coordination enables effective
+        operation from small groups up to thousands of agents without redesigning
+        the software or hardware.
+  \item \lead{Flexibility} Self-organized structures support rapid re-tasking
+        for diverse goals and environments with only minor software changes.
+\end{itemize}
+
+\subsubsection{Limited Individual Capabilities (Sensing and Communication)}
+
+Individual robots are simple, small, and low-cost, which makes it possible to
+deploy large populations that achieve collective productivity through
+cooperation. Local sensing and short-range communication restrict interactions
+to neighbors, which is vital for the scalability and stability of distributed
+coordination in swarms \cite{li2021research}.
+
+%-----------------------------------------------------------------------------
+\section{Distinguishing Swarm Robotics from Other Paradigms}\label{sec:distinction}
+
+Swarm robotics differs from multi-robot systems, sensor networks, and multi-agent
+systems in terms of scale, control, and applications. \Cref{tab:comparison}
+summarizes these differences \cite{li2021research}.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Comparison of swarm robotics with other paradigms.}
+  \label{tab:comparison}
+  \small
+  \rowcolors{2}{lightbg}{white}
+  \begin{tabularx}{\linewidth}{@{}>{\bfseries}p{0.17\linewidth}LLLL@{}}
+    \toprule
+    \rowcolor{white}
+    Feature & \textbf{Swarm robotics} & \textbf{Multi-robot system}
+            & \textbf{Sensor network} & \textbf{Multi-agent system} \\
+    \midrule
+    Population size & Highly variable & Small & Fixed & Small \\
+    Control & Decentralized & Centralized / remote & Centralized / remote
+            & Centralized / hierarchical \\
+    Homogeneity & Homogeneous & Heterogeneous & Homogeneous
+                & Homogeneous / heterogeneous \\
+    Flexibility & High & Low & Low & Medium \\
+    Scalability & High & Low & Medium & Medium \\
+    Environment & Unknown & Known / unknown & Known & Known \\
+    Motion & Yes & Yes & No & Rare \\
+    Applications & Disaster relief, military, hazardous tasks
+                 & Transportation, sensing, robot soccer
+                 & Surveillance, protection
+                 & Resource management, control \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+%-----------------------------------------------------------------------------
+\section{Importance of Path Planning in Swarm Robotics}\label{sec:importance}
+
+Path planning is a key function in the navigation of autonomous systems, and it
+becomes doubly important in swarms because of the large number of agents,
+decentralized control, and strict safety and efficiency requirements. In a swarm
+robotic system, high-level waypoint selection and coordination logic must
+produce safe, reliable, and efficient collective motion under local
+sensing/communication and real-time constraints \cite{nguyen2024swarm,tripathy2020review,taha2021path}. A general
+classification of path planning methods, following \cite{taha2021path}, is shown in
+\cref{fig:taxonomy}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{path-planning-taxonomy}
+  \caption{Classification of path planning methods (adapted from \cite{taha2021path}).}
+  \label{fig:taxonomy}
+\end{figure}
+
+\subsection{The Fundamental Challenge in Multi-Robot Systems}
+
+Multi-robot path planning requires integrating collision avoidance, optimality,
+dynamic feasibility, and team-level coordination, and it is generally treated as
+a combinatorial optimization problem that scales poorly with team size and
+environmental complexity. In the swarm setting, as the number of agents grows,
+the interaction graph and the coordination decisions expand sharply, and the
+computational and real-time challenges intensify well beyond those of
+single-robot planning \cite{nguyen2024swarm,tripathy2020review,taha2021path}. In swarm robotics, each agent is responsible
+for planning its own path. In \cref{fig:architectures}, the processing units are
+shown in red; from left to right, the figure depicts centralized, decentralized,
+and distributed control, respectively. The goal of swarm robotics is to achieve
+the distributed architecture (the last case).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.82\linewidth]{control-architectures}
+  \caption{Control architectures in multi-agent robotics: (a) centralized,
+           (b) decentralized, and (c) distributed. Processing units are shown in
+           red.}
+  \label{fig:architectures}
+\end{figure}
+
+\subsubsection{Ensuring Safe, Reliable, and Smooth Motion}
+
+\begin{itemize}
+  \item \lead{Safety and reliability} Planning must guarantee safety with respect
+        to static and moving obstacles in cluttered spaces while preserving group
+        motion; this is critical in search-and-rescue and air-traffic scenarios,
+        where failure is unacceptable. Relying solely on local formation or
+        flocking breaks down in clutter and congestion, so explicit planning
+        constructs such as safe corridors or tubes are needed to maintain
+        cohesion and resolve conflicts \cite{tripathy2020review,taha2021path,zhou2024optimal}.
+  \item \lead{Smoothness} Trajectories must satisfy kinematic/dynamic constraints,
+        with bounds on velocity and acceleration, in order to be trackable; this
+        motivates optimization-based and hierarchical ``plan-then-track'' designs
+        for smooth execution. Methods such as virtual corridors/tubes and smooth
+        trajectory parameterizations (e.g., B-splines and piecewise polynomials)
+        are widely used for smooth, collision-free motion in real time
+        \cite{tripathy2020review,taha2021path,zhou2024optimal}.
+\end{itemize}
+
+\subsubsection{Optimal Collision-Free Path Generation}
+
+\begin{itemize}
+  \item \lead{Collision avoidance} The planner must guarantee collision-free paths
+        with respect to static obstacles, moving obstacles, and other robots, and
+        it usually maintains inter-agent separation and connectivity through
+        constraints or cooperative control layers. A common mechanism is to
+        enlarge the obstacles and shrink the robot to a point, which is
+        formulated in the configuration space and simplifies the safety
+        constraints \cite{tripathy2020review,taha2021path,zhou2024optimal}.
+  \item \lead{Optimal path selection} Planning optimizes one or more criteria,
+        such as path length, time, energy, smoothness, and robustness, which
+        often leads to multi-objective formulations that trade off efficiency,
+        safety margins, and dynamic feasibility \cite{nguyen2024swarm}.
+\end{itemize}
+In swarms, optimality also encompasses collective measures such as group
+cohesion, throughput in narrow passages, and coordination costs under
+distributed execution.
+
+\subsection{Specific Challenges of Swarm Path Planning}
+
+Path planning for swarm robots combines the challenges specific to individual
+robots with a large scale, limited computational and energy resources, and the
+need for decentralized operation, which makes traditional centralized methods
+unsuitable for large teams. Consequently, algorithms must emphasize locality,
+distribution, and real-time responsiveness while preserving safety and
+efficiency guarantees \cite{nguyen2024swarm,tripathy2020review}.
+
+\subsubsection{Computational Complexity with Large Numbers of Robots}
+
+Optimizing the trajectory of every robot in a swarm is expensive; recent reports
+give complexities ranging from $O\bigl(k(n_t,\varepsilon)\,n_t^{2}\bigr)$ to
+$O\bigl(k(n_t,\varepsilon)\,n_t^{3}\bigr)$, where $n_t$ is the number of
+trajectory parameters and $k$ is the number of iterations required to reach
+accuracy $\varepsilon$. This motivates specialized structures that curb such
+growth \cite{zhou2024optimal}.
+
+As the numbers of agents and obstacles increase, the decision space grows
+combinatorially, and the planning cost rises together with the risk of
+collision; this motivates methods that reduce the dimensionality of the problem
+and the coordination overhead. Centralized architectures suffer from heavy
+computational and communication loads and struggle with dynamic behaviors and
+data traffic as the team grows, whereas distributed methods better preserve
+real-time responsiveness \cite{tripathy2020review,taha2021path,cui2024swarm}.
+
+\subsubsection{Energy Efficiency and Fault-Tolerance Requirements}
+
+\begin{itemize}
+  \item \lead{Energy efficiency} Swarm deployments in remote or harsh
+        environments require minimizing energy through shorter paths, smooth
+        velocity profiles, efficient communication, and lightweight computation,
+        so as to maximize endurance and mission success \cite{tripathy2020review,taha2021path}.
+  \item \lead{Fault tolerance and robustness} The redundancy of the swarm must
+        preserve performance under individual failures through task
+        redistribution and resilient communication, and the swarm must remain
+        stable under high failure rates and unstable links \cite{nguyen2024swarm,tripathy2020review}.
+  \item \lead{Recovery and re-synchronization} The planning and tracking layers
+        must support graceful degradation, recovery from disconnections, and
+        re-synchronization of teams, so that collective objectives are
+        maintained despite disturbances \cite{tripathy2020review}.
+\end{itemize}
+
+\subsubsection{Handling Dynamic Targets and Environments}
+
+Real-world search-and-rescue and field operations require planners that adapt
+online to unknown maps, moving obstacles, and changing layouts, beyond the reach
+of static or purely local heuristics \cite{tripathy2020review,taha2021path}.
+\begin{itemize}
+  \item \lead{Mobile and dynamic targets} Swarms must maintain coverage and
+        tracking of targets that appear, move unpredictably, or increase in
+        number, which requires continuous re-targeting and cooperative
+        reassignment of motion goals \cite{tripathy2020review,cui2024swarm}.
+  \item \lead{Real-time adaptation} To avoid costly replanning, algorithms
+        increasingly rely on hierarchical schemes, safe corridors/tubes, and
+        learning in the style of centralized training with decentralized
+        execution (CTDE) to update paths incrementally and generate smooth,
+        collision-free actions in real time \cite{zhou2024optimal,cui2024swarm}.
+\end{itemize}
+
+%-----------------------------------------------------------------------------
+\section{Seminar Objectives and Structure}\label{sec:structure}
+
+The objective of this seminar is to provide a structured and rigorous review of
+path planning in swarm robotics, with an emphasis on strategies that are based on
+swarm intelligence and enabled by artificial intelligence (AI), which unlock
+scalable, decentralized systems for real-world applications. The rest of the
+report is organized as follows:
+\begin{itemize}
+  \item \lead{\Cref{chap:introduction} -- Introduction to swarm robotics and path
+        planning} Swarm robotics, its bio-inspired origins, and its
+        characteristics are defined.
+  \item \lead{\Cref{chap:fundamentals} -- Fundamental concepts and methods in
+        swarm control} This chapter covers swarm intelligence and
+        self-organization, stigmergy, the core control architectures (including
+        decentralized, behavior-based, and hybrid methods), communication and
+        sensing, and the fundamentals of path planning, including objectives,
+        metrics, and global versus local strategies.
+  \item \lead{\Cref{chap:algorithms} -- Path planning algorithms for swarms} A
+        systematic review of deterministic (graph- and sampling-based), AI-based
+        (bio-inspired metaheuristics such as ant colony optimization (ACO) and
+        particle swarm optimization (PSO), as well as learning), and hybrid
+        methods for path optimization and swarm coordination.
+  \item \lead{\Cref{chap:challenges} -- Challenges and applications of path
+        planning in swarm robots} The challenges of swarm robotics and its
+        applications are examined.
+  \item \lead{\Cref{chap:conclusion} -- Summary and conclusions} The
+        effectiveness of the approaches is summarized, and the advantages of
+        swarm robotics are stated.
+\end{itemize}

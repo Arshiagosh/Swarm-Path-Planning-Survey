@@ -1,0 +1,166 @@
+%=============================================================================
+\chapter{Summary and Conclusions}\label{chap:conclusion}
+%=============================================================================
+
+\section{Summary of Path Planning Approaches}\label{sec:summary}
+
+Path planning is a vital component of swarm operations that fundamentally affects
+mission success, energy consumption, and the efficiency of the whole system.
+Advancing these algorithms---often driven by biological inspiration and modern AI
+techniques---is essential for realizing the full potential of autonomous systems.
+
+\subsection{Overview of Deterministic, AI-Based, and Hybrid Approaches}
+
+According to their core methodology, the path planning techniques developed for
+swarm systems fall into three main categories: deterministic approaches, AI-based
+approaches, and hybrid approaches.
+
+\paragraph{Deterministic approaches.} These are classical algorithms that rely on
+established mathematical models and predefined rules to generate paths. Although
+these methods often provide globally optimal paths and a straightforward
+implementation, they face serious difficulties in dynamic and unpredictable
+environments and can be computationally expensive; hence, on their own, they are
+not commonly used for real-time applications.
+
+\paragraph{AI-based approaches.} These methods use machine learning and other
+intelligent technologies to adapt to dynamic and uncertain environments by
+learning from data or experience \cite{taha2021path}. Their key advantage is the ability to
+handle complex scenarios, to make intelligent decisions in real time, and to adapt
+quickly to unexpected obstacles or changes in the environment. However, they
+generally require extensive training data and substantial computational
+resources.
+
+\paragraph{Hybrid approaches.} These strategies integrate elements of both
+deterministic and AI-based methods in order to exploit their complementary
+strengths and compensate for the limitations of each. The goal is to produce
+solutions that are more robust, adaptive, and efficient in complex and dynamic
+environments. Studies show that hybrid approaches make up roughly 25\% of the
+reviewed path planning literature, which indicates an open research space for
+advancing the field.
+
+\subsection{Methodologies and Their Principles}
+
+The core principles of these three families of approaches reveal their distinct
+contributions to solving the path planning problem in swarm robotics.
+
+\paragraph{Principles of deterministic methods.} Deterministic methods usually
+transform the continuous motion planning problem into a discrete search problem.
+\begin{itemize}
+  \item \lead{Graph-based methods (e.g., \Astar)} These methods determine the
+        optimal path on a discrete map using heuristic cost functions. A common
+        formulation of \Astar{} uses the function $f(n) = g(n) + h(n)$, where
+        $g(n)$ is the accumulated cost and $h(n)$ is the heuristic estimate of the
+        cost to the goal.
+  \item \lead{Sampling-based methods (e.g., PRM, RRT, \RRTstar)} These methods
+        explore complex, high-dimensional spaces through random sampling. They
+        are usually computationally efficient and probabilistically complete,
+        but they do not guarantee global optimality.
+  \item \lead{Artificial potential fields (APF)} These methods generate the path
+        from geometric principles, using a virtual force that attracts the robot
+        toward the goal and repels it from the obstacles. Conceptually, the total
+        potential can be written as $U(q) = U_{\att}(q) + U_{\rep}(q)$ and the
+        guiding force as $F(q) = -\nabla U(q)$, so that the path is shaped by
+        gradient descent.
+\end{itemize}
+
+\paragraph{Principles of AI-based methods.} These methods rely on learning and on
+iterative optimization inspired by natural processes; in path planning,
+bio-inspired techniques have been the most widely used.
+\begin{itemize}
+  \item \lead{Particle swarm optimization (PSO)} A stochastic algorithm based on
+        social behavior that balances the exploitation of the best local position
+        with the exploration of the best global position. The standard
+        formulation consists of the velocity and position updates
+        \begin{equation}
+          \begin{aligned}
+            v_i^{t+1} &= \omega\, v_i^{t}
+                         + c_1 r_1\left(\mathit{pbest}_i - x_i^{t}\right)
+                         + c_2 r_2\left(\mathit{gbest} - x_i^{t}\right), \\
+            x_i^{t+1} &= x_i^{t} + v_i^{t+1},
+          \end{aligned}
+          \label{eq:pso-summary}
+        \end{equation}
+        which make clear the roles of the inertia weight $\omega$, the
+        acceleration coefficients $c_1$ and $c_2$, and the random factors $r_1$
+        and $r_2$ in controlling the balance between exploration and
+        exploitation.
+  \item \lead{Ant colony optimization (ACO)} Agents mark and follow desirable
+        paths using an artificial pheromone, which reduces redundant motion and
+        improves coordination. The common evaporation and reinforcement rule is
+        $\tau_{ij} \leftarrow (1-\rho)\,\tau_{ij} + \sum_{k} \Delta\tau_{ij}^{k}$
+        with $\Delta\tau_{ij}^{k} = Q/L_k$ on the traversed edges, which
+        facilitates convergence to shorter paths.
+  \item \lead{Reinforcement learning (RL)} Agents learn an optimal control policy
+        through trial-and-error interaction and by receiving rewards or
+        penalties, which makes RL suitable for dynamic and uncertain
+        environments.
+\end{itemize}
+
+\paragraph{Principles of hybrid methods.} Hybrid methods integrate the efficiency
+of one algorithm with the specialized capability of another. For example,
+combining a deterministic algorithm with an AI technique can be used to tune the
+parameters adaptively or to guide the search process. A prominent example is the
+enhancement of a fuzzy neural network (FNN) path planner by integrating the
+\Astar{} algorithm to guarantee path optimality, which improves the rationality
+and feasibility of the path by removing limitations such as motion jumps.
+
+%-----------------------------------------------------------------------------
+\section{Conclusion}\label{sec:conclusion}
+
+The systematic review of path planning methodologies and real-world applications
+in this seminar confirms the vital position of swarm robotics as a key field in
+the advancement of autonomous systems. Swarm systems are designed to overcome the
+inherent limitations of single-robot or traditional multi-robot configurations,
+and they draw on the principles of spontaneous self-organization in nature and on
+computational intelligence.
+
+\subsection{Advantages of Swarm Robotics}
+
+\begin{itemize}
+  \item \lead{Fault tolerance} Swarm systems are inherently robust owing to their
+        extensive redundancy: the failure of one robot does not undermine the
+        integrity of the mission. By distributing control and functionality
+        across many agents and eliminating single points of failure, high
+        robustness and reliability are achieved.
+  \item \lead{Scalability} A central feature of swarm robotics is efficient
+        scaling from a few robots to thousands while maintaining performance and
+        efficiency. This scalability stems directly from local, simple, and
+        distributed coordination mechanisms.
+  \item \lead{Productivity and parallelism} Swarms have an advantage in complex,
+        large-scale problems, performing tasks that are impractical for a single
+        robot. Their algorithms are generally designed to be parallel, so that
+        multiple goals can be handled simultaneously, yielding significant time
+        savings in search, exploration, and construction.
+  \item \lead{Decentralization and simplicity} Decentralized control and
+        spontaneous self-organization produce macroscopic behaviors from simple
+        local interactions. The simpler components of individual robots make
+        development easier and cheaper than that of complex centralized units.
+\end{itemize}
+
+\subsection{The Critical Role of Advanced Path Planning}
+
+\begin{itemize}
+  \item \lead{The need for safe and reliable motion} Path planning is vital for
+        ensuring safe, reliable, and smooth motion, especially in large-scale or
+        obstacle-rich environments. It directly affects mission success, resource
+        utilization, and energy consumption.
+  \item \lead{Leveraging collective intelligence} Advanced path planning based on
+        swarm intelligence principles, such as ACO, PSO, and RL, is essential for
+        realizing the potential of swarm systems. By extracting insight from
+        experience and data, these methods provide intelligent adaptation in
+        dynamic and uncertain environments---a capability that traditional
+        deterministic methods alone lack.
+  \item \lead{Hybridization for robustness and efficiency} Developing hybrid
+        approaches is key: the optimality of deterministic methods is combined
+        with the flexibility of AI-based methods \cite{taha2021path}. A prominent example is
+        the integration of a fuzzy neural network (FNN) with the \Astar{}
+        algorithm, which guarantees path optimality and improves feasibility and
+        controllability by removing the inherent limitations of the FNN.
+  \item \lead{Scalability through virtualization and optimization} Advanced
+        methods must cope with the severe computational complexity of path
+        planning for large swarms. The virtual tube optimization method, by
+        combining a centralized definition of the path with distributed model
+        predictive control (MPC), drastically reduces the computational cost
+        through simple interpolation of the optimal path and preserves
+        scalability in obstacle-rich environments.
+\end{itemize}

@@ -1,0 +1,619 @@
+%=============================================================================
+\chapter{Challenges and Applications of Path Planning in Swarm Robots}\label{chap:challenges}
+%=============================================================================
+
+This chapter examines the complexities of deploying swarm robots, particularly
+with respect to their navigation and coordination, and highlights their
+applications.
+
+%-----------------------------------------------------------------------------
+\section{Challenges in Dynamic and Complex Environments}\label{sec:dynamic-challenges}
+
+With complex obstacles, large search spaces, and unpredictable changes, the
+difficulty of path planning increases dramatically. In multi-robot systems,
+simultaneous operation creates a risk of collisions between the robots and with
+obstacles, which can lead to equipment damage, delays, or mission failure;
+collision avoidance therefore becomes a critical challenge \cite{lim2018swarm,liu2018virtual}.
+
+\subsection{Obstacle Avoidance and Collision Resolution}
+
+In the swarm robotics community, obstacle avoidance is regarded as a basic and
+important task. It refers to the ability of robots to move around obstacles
+without colliding with them, mimicking the maneuverability observed in
+biological swarms \cite{bhowmick2024bio,liu2018virtual}.
+
+\subsubsection{Collision Avoidance Strategies in Dynamic Environments}
+
+In a dynamic environment, the ability of the planning algorithm to adjust the
+path in real time to accommodate moving obstacles, changes in the layout of the
+environment, or relocated targets is essential. The challenge intensifies when
+the moving obstacles have unknown headings, which makes accurate prediction of
+potential blocking points difficult \cite{liu2018virtual,trilaksono2015distributed}.
+
+The strategies used for collision avoidance in dynamic multi-robot systems
+typically emphasize real-time adaptability and computational efficiency:
+\begin{itemize}
+  \item \lead{Decentralization} The strategies are generally distributed and
+        based on local information and communication constraints, which
+        contributes to robustness and adaptability \cite{lim2018swarm,liu2018virtual}.
+  \item \lead{Real-time replanning} The rapidly-exploring random tree (RRT)
+        algorithm and its variants have been adapted to operate in real time in
+        dynamic environments. For example, one strategy grafts new waypoints
+        onto the existing path based on the concepts of local obstacle avoidance.
+        By avoiding the recomputation of the entire original path when an
+        obstacle is detected, this method greatly reduces the computation time and
+        reaches the corrected path with a relatively short deviation from the
+        initial one \cite{liu2018virtual,trilaksono2015distributed}.
+  \item \lead{Learning-based methods} Deep reinforcement learning (DRL) methods
+        are preferred over classical methods because of their ability to handle
+        collision avoidance in high-dimensional spaces without requiring
+        knowledge of the global map \cite{bhowmick2024bio,seebacher2025collective}.
+\end{itemize}
+
+\subsubsection{Potential Force Methods for Collision Avoidance}
+
+\begin{itemize}
+  \item \lead{Avoidance mechanism} Repulsion from an obstacle is likened to the
+        mechanism of an atomic nucleus: the obstacle generates a virtual
+        repulsive force, and the robots maneuver around it like electrons
+        \cite{liu2018virtual}.
+  \item \lead{Priority and guarantee} The design must ensure that the collision
+        avoidance mechanism takes precedence over all other actions. With
+        properly defined potential functions, a mathematical guarantee can be
+        given that no collision will occur, provided that the repulsive vector
+        becomes unbounded as the distance tends to zero \cite{sahin2005swarm,liu2018virtual}.
+  \item \lead{Swarm coordination} Potential functions are used to guide swarms
+        and to modify the desired positions of the robots so that they circumvent
+        obstacles. Shape controllers employ several potential forces to maintain
+        the desired formation together with collision avoidance \cite{lim2018swarm,liu2018virtual}.
+\end{itemize}
+
+\subsubsection{Obstacle Enlargement and Robot Shrinking}
+
+A simplifying deterministic technique in path planning is to adjust the effective
+size of the obstacles or of the robot in order to simplify collision checking
+\cite{sahin2005swarm,liu2018virtual}.
+\begin{itemize}
+  \item \lead{Principle} This mechanism achieves collision avoidance by
+        effectively enlarging the obstacles and shrinking the moving body to a
+        point mass.
+  \item \lead{Application} In constrained optimization formulations (such as
+        global path planning in a static environment), the radii of convex
+        polygonal and circular obstacles are increased in proportion to the
+        physical dimensions of the robot. The robot is thus modeled as a
+        mathematical particle that remains collision-free as long as it stays
+        outside the boundary of the enlarged obstacle.
+\end{itemize}
+
+\subsubsection{Optimal Reciprocal Collision Avoidance (ORCA)}
+
+The ORCA algorithm is a powerful and widely used variant of the reciprocal
+velocity obstacle (RVO) methods for collision-free navigation \cite{lim2018swarm,seebacher2025collective}.
+\begin{itemize}
+  \item \lead{Mechanism} ORCA belongs to the class of algorithms that, assuming
+        that the velocities of the neighbors are known and exchanged, select
+        collision-free velocities for each agent in real time.
+  \item \lead{Efficiency} The computational complexity of ORCA is usually
+        reported to be $O(k)$.
+  \item \lead{Comparison with Voronoi-based methods} ORCA is often compared with
+        techniques such as the buffered Voronoi cell (BVC). Although their
+        empirical performance is similar, the key difference lies in the
+        exchange of information: ORCA relies on a communication network to
+        exchange relative positions and velocities, whereas BVC often needs only
+        the sensed relative positions to guarantee avoidance.
+\end{itemize}
+
+\subsection{Unknown and Dynamic Environments}
+
+The transition from controlled laboratory settings to real-world applications
+requires handling environments whose information is incomplete or that change
+continuously. Under these conditions, swarm path planning must address real-time
+search, robust coordination, and dynamic target seeking.
+
+\subsubsection{Search-and-Rescue Missions in Hazardous Conditions}
+
+Search-and-rescue (SaR) operations are a key target for swarm robotics, because
+these scenarios are inherently complex and hostile and challenge the application
+of traditional multi-robot systems \cite{bhowmick2024bio,liu2018virtual}.
+\begin{itemize}
+  \item \lead{Characteristics of SaR environments} Large extents, from hundreds
+        of square meters to hectares; extreme dynamics caused by internal and
+        external factors such as collapses, fires, floods, and earthquakes; and
+        harsh conditions, including abrasive dust, water, chemicals, and numerous
+        obstacles that damage the hardware and the communications.
+  \item \lead{Advantages of swarms} Robustness to the failure of units,
+        scalability, and reliance on self-organization improve the emergency
+        response through damage assessment, resource management, and movement
+        through complex environments to find and assist survivors. Examples
+        include AquaDrones in floods and nano-robots for cleaning up hazardous
+        materials.
+\end{itemize}
+
+\subsubsection{Adapting to Moving Targets and Changing Conditions}
+
+An important challenge arises when the targets, the obstacles, or the terrain are
+not fixed but change dynamically and unpredictably \cite{lim2018swarm,liu2018virtual,trilaksono2015distributed}.
+\begin{itemize}
+  \item \lead{Handling dynamic changes} Swarm systems must react and adapt in real
+        time to changes in the terrain, in environmental conditions (such as
+        weather and currents), or to unexpected obstacles.
+  \item \lead{Moving target tracking (MTT)} In an environment full of obstacles,
+        the swarm must simultaneously move as a flock, avoid the obstacles, and
+        maintain sufficient collective coverage so as not to lose the target;
+        this problem is relevant to escorting, monitoring, and group transport.
+  \item \lead{Difficulty of prediction} In environments with moving obstacles
+        whose headings are unknown, determining the potential blocking points is
+        difficult.
+  \item \lead{Adaptive algorithms} Continuous motion and adaptation require
+        algorithms with predictive capabilities.
+\end{itemize}
+
+\subsubsection{Real-Time Path Planning for Multi-Robot Systems}
+
+In dynamic, unknown, or partially known environments, computing an optimal global
+path is often prohibitively expensive, so the focus shifts to efficient real-time
+local strategies for planning and replanning:
+\begin{itemize}
+  \item \lead{Dynamic grid search (\Dstar{} and \Dstar{} Lite)} \Dstar{} is an
+        extension of \Astar{} for handling changes efficiently. By updating the
+        weights of the edges affected by newly observed obstacles, \Dstar{}
+        repairs only the necessary parts of the path instead of replanning
+        completely \cite{lim2018swarm,liu2018virtual}.
+  \item \lead{Sliding time windows} This strategy is combined with local
+        optimizers such as ABC, PSO, and the fireworks algorithm (FWA) to solve
+        multi-robot path planning in dynamic and unknown environments; a limited
+        time window is used for local perception and prediction, which reduces
+        the need for costly global planning \cite{bhowmick2024bio,lim2018swarm}.
+  \item \lead{RRT-based real-time replanning} The RRT family is well suited to
+        dynamic environments because it accounts for the dynamic constraints of
+        the robot; the grafting technique adds new waypoints to the existing path
+        and removes the invalid part, reducing the computational load of a
+        complete recomputation \cite{liu2018virtual,trilaksono2015distributed}.
+  \item \lead{Artificial potential field} The APF is valuable for rapid path
+        adjustment because of its fast reaction to nearby obstacles, but it is of
+        limited use in highly complex environments because of the risk of getting
+        trapped in local minima \cite{sahin2005swarm,liu2018virtual,trilaksono2015distributed}.
+\end{itemize}
+
+\subsection{Adaptation and Real-Time Replanning}
+
+The growing demand for deploying multi-robot systems in complex real-world
+scenarios has made it necessary to move from offline, static planning to
+strategies for real-time adaptation and rapid replanning.
+
+\subsubsection{Dynamic Multi-Robot Systems and Environmental Changes}
+
+Path planning in dynamic environments is multifaceted: the environment changes
+because of external factors, moving targets, or the actions of the robots
+themselves \cite{lim2018swarm,liu2018virtual}.
+\begin{itemize}
+  \item \lead{Need for real-time reaction} Algorithms must adapt quickly to
+        changes; traditional deterministic methods often fail to adapt rapidly to
+        unexpected obstacles and are computationally expensive \cite{lim2018swarm,liu2018virtual}.
+  \item \lead{Environmental instability} In applications such as SaR after
+        natural disasters, the environment can change rapidly (falling debris,
+        weather conditions, unexpected events), and the algorithms must allow the
+        behavior and the flight or motion patterns to be changed immediately
+        \cite{bhowmick2024bio,liu2018virtual}.
+  \item \lead{Adaptability and flexibility} The swarm must be flexible enough to
+        cope with various tasks and situations and to adjust its paths as water
+        or air currents change or as obstacles appear \cite{lim2018swarm,liu2018virtual}.
+  \item \lead{Complexity of distributed control} Controlling groups of simple,
+        reactive robots in a distributed structure is difficult, because the
+        desired macroscopic behaviors emerge only from local interactions, and
+        path planning must respond to continuously changing scenarios without
+        relying on a limited set of predefined conditions \cite{liu2018virtual,trilaksono2015distributed}.
+\end{itemize}
+
+\subsubsection{RRT-Based Algorithms for Replanning}
+
+The RRT family and its variants are suitable for dynamic environments because of
+their ability to generate feasible paths and to incorporate the dynamic
+constraints of the robot directly \cite{liu2018virtual,trilaksono2015distributed}.
+\begin{itemize}
+  \item \lead{RRT-Connect and optimality} RRT and its enhanced versions, such as
+        RRT-Connect and \RRTstar, have been explored in dynamic environments;
+        although \RRTstar{} provides asymptotic optimality, it can be
+        computationally expensive.
+  \item \lead{Grafting for real-time efficiency} In real-time applications,
+        grafting adds new points based on local avoidance and nonholonomic
+        constraints, generating a new point when a potential collision is
+        detected in the next sampling step. Instead of recomputing the whole
+        tree, it prunes the invalid part and repairs the structure, so that only
+        a short detour results.
+\end{itemize}
+
+Dynamic variants include:
+\begin{itemize}
+  \item \lead{DRRT} Provides fast, feasible, but sub-optimal paths by pruning and
+        regrowing the affected parts of the tree.
+  \item \lead{\RRTstar FND} Achieves asymptotic optimality through repeated
+        updates in a dynamic environment, albeit at a high computational cost.
+  \item \lead{RT-\RRTstar} Retains the full tree structure without pruning, which
+        enables fast queries for multiple goals and rapid rewiring of the path in
+        response to dynamic obstacles and changing goals.
+\end{itemize}
+
+%-----------------------------------------------------------------------------
+\section{Scalability and Robustness}\label{sec:scalability}
+
+Scalability and robustness are common and essential properties of swarm systems
+that enable them to operate effectively in complex real-world scenarios.
+Robustness refers to the ability of the system to function normally despite
+disturbances or individual failures, whereas scalability refers to the ability
+to maintain effective operation across different population sizes
+\cite{dias2021swarm,hart2004reducing}.
+
+\subsection{Scalability in Swarm Systems}
+
+Scalability is both a critical challenge and a defining characteristic of swarm
+robotics: the system must work with arbitrary population sizes, from a few units
+to potentially thousands. Since the control method is usually identical for every
+member of the swarm, the system is designed to be highly scalable \cite{dias2021swarm,liu2018virtual}.
+
+\subsubsection{Maintaining Performance as the Number of Robots Increases}
+
+Scalability is the capacity of the system to adjust the number of robots flexibly
+without a noticeable change in its overall functionality or an excessive drop in
+efficiency or reliability \cite{dias2021swarm,hart2004reducing}.
+\begin{itemize}
+  \item \lead{Design principle} Scalability stems from decentralization and from
+        predominantly local interactions. Methods that rely on global
+        broadcasting or on monitoring large parts of the swarm are avoided in
+        order to preserve scalability, and local sensing and communication
+        facilitate this property.
+  \item \lead{Ideal versus actual performance} In the ideal case, a
+        super-scalable system performs almost independently of the number of
+        robots; in a standard system, the loss of efficiency as units are added
+        is small; otherwise, population growth causes severe degradation or
+        instability.
+  \item \lead{Cognitive complexity} For independent robots, the control
+        complexity is $O(n)$, whereas with proper distributed coordination, swarm
+        control can reduce the complexity for the operator to $O(1)$ \cite{ge2018multi}.
+  \item \lead{Effect on tasks} Adding or removing members should not jeopardize
+        the completion of the mission, and implicit reallocation of tasks should
+        occur without external intervention; some composite behaviors, such as
+        monitoring combined with return-to-base, have also been reported to scale
+        in both size and area.
+  \item \lead{Challenges} As the number of robots increases, maintaining
+        productivity becomes harder and requires mechanisms such as control
+        hierarchies and clustering to manage the communication and processing
+        load and to prevent bottlenecks \cite{bhowmick2024bio}.
+\end{itemize}
+
+\subsubsection{Simulation of Large-Scale Swarms}
+
+Because of the inherent need for scalability, simulating large populations of
+hundreds or thousands of robots is a vital part of research, since field testing
+at this scale is costly and time-consuming.
+\begin{itemize}
+  \item \lead{The need for simulation} Swarm algorithms must be validated at very
+        large scales, and modeling and simulation are the necessary tools for this
+        purpose \cite{dias2021swarm,ge2018multi}.
+\end{itemize}
+Notable simulators and platforms include the following \cite{dias2021swarm,liu2018virtual}:
+\begin{itemize}
+  \item \lead{ARGoS} A multi-engine, modular simulator focused on scalability and
+        parallelism; it can be configured for swarms and for different levels of
+        abstraction.
+  \item \lead{Player/Stage/Gazebo} An open-source framework with multi-robot
+        capabilities; it supports 2-D swarm behaviors, and nearly linear run-time
+        scalability has been reported for very large populations.
+  \item \lead{Kilobot} A low-cost, small physical platform for testing collective
+        algorithms with hundreds to thousands of robots, with simple assembly and
+        operation for scalable experiments.
+\end{itemize}
+
+\subsubsection{Exponential Growth of States in Modular Robotics}
+
+Although scalability usually refers to functioning independently of the size of
+the population, in modular robotic systems the complexity of a configuration
+space with many degrees of freedom poses a distinct challenge \cite{liu2018virtual,hart2004reducing}.
+\begin{itemize}
+  \item \lead{Modular systems} Self-reconfigurable systems such as M-TRAN, ATRON,
+        and PolyBot are designed to build and form complex structures.
+  \item \lead{State explosion} The number of possible states can grow
+        exponentially with the number of modules, which makes centralized
+        planning and control difficult and reinforces the need for robust local
+        rules.
+\end{itemize}
+Mathematically, this growth is expressed as
+\begin{equation}
+  S = k^{n},
+  \label{eq:state-explosion}
+\end{equation}
+where $S$ is the total number of possible states, $k$ is the number of possible
+states of each module, and $n$ is the number of modules.
+\begin{itemize}
+  \item \lead{Configuration flexibility} Self-reconfigurable chains are more
+        flexible, but managing the state explosion remains a key computational
+        obstacle.
+\end{itemize}
+
+\subsection{Robustness and Fault Tolerance}
+
+Robustness and fault tolerance are fundamental properties of swarm robotic
+systems; they mean maintaining operation and a desired level of performance in
+the face of internal failures or external disturbances \cite{dias2021swarm,liu2018virtual,hart2004reducing}.
+
+\subsubsection{Robustness to Failures of Individual Robots}
+
+Robustness to individual failures stems mainly from redundancy and from the
+absence of a centralized point of control.
+\begin{itemize}
+  \item \lead{Massive redundancy} The large number of robots provides critical
+        redundancy for safety and fault tolerance, and the loss of one robot can
+        be compensated for by the others.
+  \item \lead{Distributed control} The absence of a single point of failure means
+        that the failure of one node or part does not disable the whole system.
+  \item \lead{Performance preservation} The core design relies on the
+        interchangeability of individuals, so the system continues to operate
+        despite the failure of some members, albeit with a limited loss of
+        capability.
+  \item \lead{Fault detection} Methods for automatic fault detection that exploit
+        the natural redundancy of the swarm have been developed; for example,
+        collective synchronization can serve as a basis for detecting faulty
+        behaviors.
+\end{itemize}
+
+\subsubsection{Fault Tolerance and Redundancy in Communication}
+
+Ensuring the robustness of communication in dynamic and crowded environments is
+challenging and requires special mechanisms to cope with failures, interference,
+and delays \cite{sahin2005swarm,hart2004reducing}.
+\begin{itemize}
+  \item \lead{Redundant communication paths} Establishing alternative paths helps
+        maintain the robustness of the network if one path is broken.
+  \item \lead{Distributed nodes and reconfiguration} Distributing communication
+        tasks among several robots and reconfiguring dynamically are used to
+        adapt to changing conditions and to reduce the impact of faults.
+  \item \lead{Information redundancy} Replicating critical information across
+        several robots preserves its availability in the face of communication
+        problems.
+  \item \lead{MANETs and multi-connectivity} In missions such as SaR, maintaining
+        a mobile ad hoc network (MANET) without pre-existing infrastructure is
+        essential, and strategies such as attractive forces and redundancy aid
+        fault tolerance. The concept of $k$-connectivity generalizes
+        bi-connectivity and guarantees that the network remains connected despite
+        the failure of up to $k-1$ nodes.
+  \item \lead{Robust connectivity condition} $C(G) \ge k$, where $C(G)$ is the
+        connectivity of the network graph and $k$ is the desired level of fault
+        tolerance.
+\end{itemize}
+
+%-----------------------------------------------------------------------------
+\section{Task Allocation and Coordination}\label{sec:task-allocation}
+
+Multi-robot task allocation (MRTA) is the problem of assigning tasks to
+individual robots so as to maximize the expected performance of the overall
+system. In general, task allocation is regarded as an instance of the optimal
+assignment problem. In swarm robotics, this coordination task is vital for
+distributing the work and ensuring that collective goals are achieved
+efficiently, especially given the decentralized nature of the control
+\cite{zhang2025deep,wang2021modeling,chai2024design}.
+
+\subsection{Dynamic Task Allocation}
+
+Dynamic task allocation refers to strategies in which the matching between tasks
+and robots is computed iteratively over time, so that the robot team collectively
+adapts to changing conditions, tasks, or environments. Compared with simple
+offline methods, the online approach makes it possible to adapt to dynamic
+changes \cite{sahin2005swarm,dias2021swarm}.
+
+\subsubsection{Efficient Achievement of Collective Goals}
+
+Achieving collective goals requires an optimal distribution of tasks that takes
+into account the capabilities of the robots, their workload, and the
+environmental constraints. The system must allocate tasks among the robots
+dynamically so as to maximize the performance of the whole swarm and minimize
+unnecessary redundancy \cite{fu2018improved,hart2004reducing}.
+\begin{itemize}
+  \item \lead{Necessity in complex tasks} Decomposing tasks and allocating them
+        afterward is necessary to improve performance significantly. In
+        sequential tasks, robots can measure the delay between finishing their
+        own work and waiting for another subtask to be completed, and they can use
+        this local cue to decide on the division of labor, so that interdependent
+        subtasks are executed concurrently by different individuals and
+        interference is reduced.
+  \item \lead{Decentralized decision-making} For scalability and robustness,
+        decision-making must be decentralized: each robot selects and prioritizes
+        tasks based on its own state, its sensor data, and the mission goals, and
+        distributed task allocation algorithms facilitate this autonomy
+        \cite{ge2018multi}.
+  \item \lead{Optimization objectives} Criteria such as minimizing the completion
+        time, maximizing resource utilization, or balancing the load among robots
+        are used; however, maximizing collective utility in the presence of group
+        dynamics is generally an NP-hard problem \cite{sahin2005swarm,dias2021swarm}.
+\end{itemize}
+
+\subsubsection{Heuristic Algorithms for Distributed Task Selection}
+
+The distributed task selection problem (DTSP) in a swarm setting is NP-complete,
+and finding globally optimal solutions in polynomial time is intractable. Hence,
+polynomial-time heuristic algorithms are proposed to obtain ``good enough''
+solutions \cite{liu2018virtual}.
+\begin{itemize}
+  \item \lead{Model and objective} The distributed task selection mechanism tries
+        to assign the desired number of swarm units to each task while reducing
+        inter-task delays and communication overhead; this problem is often
+        modeled as a dynamic traveling salesman problem.
+  \item \lead{Performance of the heuristics} Simulations show that heuristics in
+        which each swarm unit considers both the effect of the other units on the
+        tasks and its own relative position lead to better task-processing
+        performance and a more uniform distribution. For example, if the total
+        completion time is the main constraint, proximity-based heuristics are
+        more suitable, whereas if individual efficiency matters more,
+        preference-based heuristics take priority.
+  \item \lead{Communication constraints} These approaches usually operate without
+        relying on shared memory or a central location, using only distributed
+        communication.
+\end{itemize}
+
+\subsubsection{Task Scheduling Controllers}
+
+Task scheduling controllers are used particularly in hierarchical or layered
+control architectures to manage the overall flow of the mission and to
+coordinate tasks dynamically \cite{wang2024apfcpp}.
+\begin{itemize}
+  \item \lead{Role and function} At each time instant, the controller selects the
+        subset of tasks that must be executed concurrently, designates the
+        ``leader'' (master) robot, and determines how many tasks should be
+        requested from each dispatch point.
+  \item \lead{Integration with central planning} In some frameworks, a global
+        planner or central scheduler proposes optimal allocations, which the
+        controllers manage and distribute across the swarm; for example, CoMPACT
+        uses a hierarchical architecture that combines mission planning with
+        dynamic task allocation, motion planning, and swarm behaviors.
+  \item \lead{Minimizing overhead} With a minimal computational load, the
+        controllers approximate a near-optimal strategy for the distributed
+        navigation controllers of the robots, which is critical because of the
+        timing and ordering constraints in multi-robot systems.
+\end{itemize}
+
+\subsection{Cooperative Control and Manipulation}
+
+Cooperative control is the problem of steering a multi-agent system toward a
+common goal (exploration, search, rescue, etc.); integrating multiple robots
+increases capacity, flexibility, and efficiency.
+
+\subsubsection{Multi-Robot Teamwork Strategies}
+
+For cohesive and efficient operation, multi-robot systems require powerful
+coordination strategies that ensure inter-robot communication, effective task
+allocation, and conflict resolution \cite{wang2013experience}. Cooperation is collective behavior
+directed toward a common goal or reward \cite{wang2013experience}.
+\begin{itemize}
+  \item \lead{Decentralized coordination} For scalability and robustness,
+        coordination must be decentralized and based on local interactions and
+        simple rules, so that global behaviors emerge from local interactions
+        \cite{wang2013experience}.
+  \item \lead{Implicit versus explicit} Cooperation can emerge implicitly from the
+        autonomous decisions of individuals or be facilitated by explicit
+        communication (subject to bandwidth constraints) to improve coordination,
+        information exchange, and motion synchronization.
+  \item \lead{Behavioral approaches} Behavior-based control (e.g., for formation
+        generation) and distributed control are commonly used to manage
+        interactions and resolve conflicts with local information; a controller
+        based on multiple potential forces can steer the robots toward the
+        desired shape and prevent collisions.
+  \item \lead{Hierarchical architectures} In complex systems, multi-level
+        architectures for formation generation and hybrid approaches are used.
+        For example, Hybrid-HASP (hierarchical action selection process) combines
+        competitive and cooperative mechanisms to select and combine primitive
+        behaviors, and it strengthens implicit communication through simple
+        attractive and repulsive signals.
+\end{itemize}
+
+\subsubsection{Cooperative Grasping and Object Transport}
+
+Cooperative transport and manipulation (e.g., box pushing) is a common benchmark
+and usually involves objects that a single robot cannot handle \cite{lavalle1998rapidly,yu2022novel}.
+\begin{itemize}
+  \item \lead{Physical requirements} A physical connection (self-assembly) is
+        necessary to cross large gaps or to perform complex transport;
+        cooperative grasping requires communication and docking before
+        execution.
+  \item \lead{The Swarm-bot project} This project showed that autonomous agents
+        relying solely on local information can cooperatively transport heavy
+        objects that a single robot cannot move; the aggregation of s-bots into a
+        formation plays a key role. These robots are shown in
+        \cref{fig:swarm-bot}.
+  \item \lead{Coordinated motion} In cooperative transport, the robots must share
+        information about the object and the destination, agree on a common
+        direction, and then move together. For complex tasks such as box pushing,
+        protocols such as Hybrid-HASP are used for coordination, and implicit
+        communication can also guide the transport.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{swarm-bot}
+  \caption{A practical implementation of the Swarm-bot (s-bot) robot.}
+  \label{fig:swarm-bot}
+\end{figure}
+
+\subsubsection{Consensus, Tracking, and Containment}
+
+Path planning for cooperative swarms must address the fundamental objectives of
+consensus, maintenance of relative positions or formation (tracking), and
+containment \cite{guo2020global}.
+\begin{itemize}
+  \item \lead{Consensus control} The group must reach agreement on the variables
+        of interest; consensus algorithms (relatives of distributed linear
+        algorithms) typically induce motion toward the average of the received
+        messages (positions or estimates).
+  \item \lead{Tracking and formation control} Formation is a key application of
+        cooperative control whose aim is to achieve a fixed geometric pattern;
+        leader--follower and flocking approaches are used, with collision
+        avoidance, velocity matching, and flock centering \cite{yu2019acoastar}. A simulation
+        of this method is shown in \cref{fig:leader-follower}.
+  \item \lead{Containment and region control} The strategies must keep the motion
+        safe and contained. In region control, the group is kept within a
+        predefined region using constraint functions, and in multi-level designs,
+        convergence to predefined regions or shapes is guaranteed layer by
+        layer.
+\end{itemize}
+Containment can be formulated mathematically as
+\begin{equation}
+  x_i(t) \in \operatorname{conv}\bigl\{x_j(t) : j \in \mathcal{L}\bigr\},
+  \label{eq:containment}
+\end{equation}
+where $\mathcal{L}$ is the set of leaders and $\operatorname{conv}$ denotes the
+convex hull \cite{yu2019acoastar}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.65\linewidth]{leader-follower}
+  \caption{Motion of a robot swarm under the leader--follower method.}
+  \label{fig:leader-follower}
+\end{figure}
+
+%-----------------------------------------------------------------------------
+\section{Real-World Applications of Swarm Robotics}\label{sec:applications}
+
+The ultimate goal of swarm robotics research is to deploy these systems in
+real-world scenarios, especially where the tasks are too hazardous, complex, or
+large-scale for individual robots or human teams. Although swarm robotics has
+traditionally been confined to academia, the field is rapidly advancing toward
+practical applications \cite{cimurs2022goal,mavrovouniotis2017ant}. Examples of real-world applications of swarm
+robotics are compiled in \cref{tab:applications}.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Real-world applications of swarm robotics.}
+  \label{tab:applications}
+  \small
+  \rowcolors{2}{lightbg}{white}
+  \begin{tabularx}{\linewidth}{@{}>{\bfseries\raggedright\arraybackslash}p{0.18\linewidth}LLL@{}}
+    \toprule
+    \rowcolor{white}
+    Application domain & \textbf{Specific tasks and missions}
+      & \textbf{Example platforms or projects} & \textbf{Key advantages and methods} \\
+    \midrule
+    Agriculture & Precision weeding, crop monitoring \cite{sutton2018reinforcement}
+      & LettuceBot, senseFly
+      & Reduced use of chemicals through machine vision; round-the-clock (24/7)
+        monitoring \\
+    Search and rescue & Locating survivors in rubble, structural assessment
+        \cite{pflueger2019rover}
+      & RoboBees, AquaDrones
+      & Swarm algorithms for rapid area coverage and for communication in
+        GPS-denied environments \\
+    Construction & Automated bricklaying, 3-D printing of structures \cite{jiang2020path}
+      & SAM, Skycatch
+      & 50\% reduction in labor costs; improved safety when working at height \\
+    Environmental monitoring & Marine pollution monitoring, oil-spill tracking
+        \cite{tan2024expected}
+      & microUSV
+      & Distributed sensors for simultaneous collective mapping \\
+    Warehousing and logistics & Smart warehouse management, goods handling
+      & Kiva
+      & Path optimization and collision avoidance in crowded environments with
+        decentralized algorithms \\
+    Space exploration & On-orbit construction, asteroid exploration
+      & NASA projects for in-space assembly
+      & Shape-changing capability and high fault tolerance in remote
+        environments \\
+    \bottomrule
+  \end{tabularx}
+\end{table}

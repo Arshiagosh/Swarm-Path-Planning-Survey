@@ -1,0 +1,1056 @@
+%=============================================================================
+\chapter{Path Planning Algorithms for Swarm Robots}\label{chap:algorithms}
+%=============================================================================
+
+This chapter reviews bio-inspired optimization methods that have been adapted for
+decentralized, multi-robot path planning, emphasizing their natural inspirations,
+their operational rules, and their adaptations to robot collectives for robust
+and scalable navigation in dynamic environments.
+
+Swarm intelligence approaches are popular in multi-robot settings because simple
+local rules and indirect communication lead to emergent macroscopic behaviors
+that remain robust to failures and scale to large populations without
+centralized control \cite{nguyen2024swarm}.
+
+%-----------------------------------------------------------------------------
+\section{Bio-Inspired Algorithms}\label{sec:bio-inspired}
+
+By mimicking foraging, flocking, and colony organization, bio-inspired algorithms
+navigate complex spaces without a global model of the environment, thereby
+achieving fast convergence and the ability to escape local minima for NP-hard
+combinatorial objectives in multi-robot teams \cite{tripathy2020review}.
+
+These methods rely on decentralized decisions by the agents, local perception,
+and direct interaction or stigmergic signals, which together improve robustness,
+scalability, and real-time responsiveness under the uncertainties common in
+multi-robot deployments \cite{nguyen2024swarm}.
+
+\subsection{Ant Colony Optimization (ACO)}
+
+ACO is a classical swarm intelligence method in which artificial ants deposit and
+follow pheromone while constructing paths, steering the search toward promising
+routes in large combinatorial spaces and in the motion graphs of robots
+\cite{panigrahi2011handbook}.
+
+Its core idea is positive feedback through pheromone reinforcement, combined with
+evaporation to balance exploitation and exploration, which makes ACO well suited
+to high-dimensional routing and discrete motion planning problems in robotics.
+
+\subsubsection{Inspiration from Ant Foraging Behavior}
+
+\begin{itemize}
+  \item \lead{Pheromone mechanism} Real ants stochastically prefer paths with
+        higher pheromone concentrations, so shorter paths accumulate pheromone
+        faster and are chosen more often; the algorithm reproduces these dynamics
+        of pheromone deposition and evaporation \cite{panigrahi2011handbook}.
+  \item \lead{Stigmergic foundation} Trail laying and trail following constitute
+        stigmergy---indirect coordination through modification of the
+        environment---which in robotics can be implemented with virtual markers
+        or distributed maps for decentralized navigation \cite{yi2019multi}.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\linewidth]{aco-path-selection}
+  \caption{Pheromone accumulation and path selection in the ant colony
+           algorithm.}
+  \label{fig:aco-path-selection}
+\end{figure}
+
+\Cref{fig:aco-path-selection} illustrates how ants select paths according to the
+pheromone concentration. In the first stage (panel~a), the ants choose their paths
+at random because there is no pheromone on the paths yet. The ants that traverse
+the shorter path (e.g., path BFC) then deposit more pheromone on it, so the
+pheromone concentration on this path gradually increases. As a result, in the
+subsequent iterations (panels~b and~c), more ants choose the shorter path, which
+accumulates the most pheromone. This mechanism creates a positive feedback loop,
+and eventually all ants choose the optimal path. These algorithmic dynamics
+reproduce the natural behavior of ants and form the basis of the ant colony
+optimization algorithm.
+
+\subsubsection{Variants and Applications (AS-TSP, ACS-TSP)}
+
+\begin{itemize}
+  \item \lead{Ant System (AS-TSP)} The first ACO algorithm for the traveling
+        salesman problem (TSP), which introduced the pheromone-guided
+        constructive building of solutions but was later surpassed by improved
+        variants.
+  \item \lead{Ant Colony System (ACS-TSP)} ACS strengthens AS with local pheromone
+        updates, usually integrates local search, and achieves leading
+        performance, especially on the asymmetric TSP.
+  \item \lead{Other applications} ACO variants have addressed quadratic
+        assignment, sequential ordering, vehicle routing, and graph coloring
+        problems. In robotics, ACO has been used to optimize the parameters of
+        the membership functions of fuzzy controllers and, combined with fuzzy
+        cost functions, for the navigation and path planning of mobile robots.
+\end{itemize}
+
+\subsubsection{Pheromone Update Rules and Heuristics}
+
+In standard ACO on graphs, a probabilistic transition rule weights the pheromone
+intensity $\tau$ and the heuristic desirability $\eta$; pheromone evaporation and
+a deposition proportional to the quality of the tour are then applied:
+\begin{align}
+  p_{ij}^{k}(t) &=
+    \begin{cases}
+      \dfrac{\tau_{ij}(t)^{\alpha}\,\eta_{ij}^{\beta}}
+            {\sum_{u \in \mathcal{N}_i^{k}} \tau_{iu}(t)^{\alpha}\,\eta_{iu}^{\beta}},
+        & j \in \mathcal{N}_i^{k}, \\[2ex]
+      0, & \text{otherwise},
+    \end{cases}
+    \label{eq:aco-transition} \\[1ex]
+  \eta_{ij} &= \frac{1}{d_{ij}},
+    \label{eq:aco-heuristic} \\[1ex]
+  \tau_{ij}(t+1) &= (1-\rho)\,\tau_{ij}(t) + \sum_{k=1}^{m} \Delta\tau_{ij}^{k},
+    \label{eq:aco-update} \\[1ex]
+  \Delta\tau_{ij}^{k} &=
+    \begin{cases}
+      \dfrac{Q}{L_k}, & \text{if } (i,j) \text{ is in the tour of ant } k, \\[1.5ex]
+      0, & \text{otherwise}.
+    \end{cases}
+    \label{eq:aco-deposit}
+\end{align}
+
+In ACS, a local update that decreases the pheromone after each move lowers the
+pheromone on recently used edges, which encourages exploration and prevents
+premature stagnation \cite{panigrahi2011handbook}.
+
+\subsubsection{Theoretical Aspects and Runtime Analysis}
+
+\begin{itemize}
+  \item \lead{Construction-graph model} ACO can be modeled as the construction of
+        solutions on a graph with restricted transition neighborhoods and
+        stochastic selection, which allows probabilistic runtime bounds to be
+        derived through level-based analyses.
+  \item \lead{Convergence} Formal results show that the pheromones are bounded
+        and that, with sufficient iterations and suitable parameter ranges, the
+        probability of sampling optimal tours is positive; probabilistic
+        convergence is thereby established for the basic ACO models.
+  \item \lead{Controller tuning} Grid-based ACO has been used to tune the
+        parameters of nonlinear PID (NLPID) controllers, and its convergence has
+        been demonstrated in simulation loops for mechatronic systems, which
+        illustrates the synergy between control and optimization. The
+        corresponding block diagram is shown in \cref{fig:aco-nlpid}.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.88\linewidth]{aco-nlpid}
+  \caption{Using ACO to tune the parameters of an NLPID controller.}
+  \label{fig:aco-nlpid}
+\end{figure}
+
+\subsection{Particle Swarm Optimization (PSO)}
+
+PSO models a swarm of particles that update their velocities and positions by
+combining inertial motion, their personal best experience, and the social best,
+yielding a simple yet powerful optimizer with strong empirical convergence and
+low computational overhead \cite{nguyen2024swarm}.
+
+Compared with many heuristics, PSO requires few parameters, is inherently
+parallelizable, and is effective for continuous trajectory parameterization,
+controller tuning, formation shaping, and multi-robot task allocation \cite{chen2019path}.
+
+\subsubsection{Inspiration from Bird Flocking and Fish Schooling}
+
+The cognitive--social mechanism of PSO reflects alignment and cohesion in flocks
+and schools: the particles move toward their own best positions $p_i$ and the
+best position of the group $g$, while inertia supports exploration \cite{nguyen2024swarm}:
+\begin{equation}
+  v_i^{t+1} = w\,v_i^{t} + c_1 r_1\left(p_i - x_i^{t}\right)
+              + c_2 r_2\left(g - x_i^{t}\right), \qquad
+  x_i^{t+1} = x_i^{t} + v_i^{t+1}, \qquad
+  r_1, r_2 \sim U(0,1).
+  \label{eq:pso}
+\end{equation}
+
+\subsubsection{Variants and Improvements (IPSO-DAI, NisB PSO)}
+
+\begin{itemize}
+  \item \lead{Parameter scheduling} Linearly decreasing the inertia weight $w$
+        improves global exploration early in the search and local exploitation
+        later on, reducing the risk of premature convergence in complex
+        landscapes \cite{chen2019path}.
+  \item \lead{PSO with integral control (IPSO-DAI)} Integral dynamics and
+        dispersed accelerator information increase the diversity of velocities
+        and improve the escape from local optima in multimodal, high-dimensional
+        problems.
+  \item \lead{Topology} Ring topologies restrict the social neighborhood, and
+        niching splits the swarm into sub-swarms (e.g., kPSO, NichePSO, and
+        RDPSO) that maintain multiple optima for multimodal path planning and
+        multi-objective missions.
+  \item \lead{Hybrids} Combining PSO with B-spline smoothing, gravitational search,
+        or symbiotic search improves compliance with kinematic/dynamic
+        constraints and enhances the smoothness of solutions for flight and
+        driving paths.
+  \item \lead{Oscillating and collision-free PSO} Adding second-order/oscillatory
+        terms together with collision-free constraints keeps the particles inside
+        the feasible region in constrained navigation domains.
+\end{itemize}
+
+\subsubsection{Multi-Objective PSO (MOPSO)}
+
+MOPSO generalizes single-objective PSO by replacing the single global best $g$
+with archives of non-dominated solutions and with crowding or clustering
+criteria that maintain a diverse Pareto front; it also redefines how the guides
+for $p_i$ and for the group are selected \cite{das2016hybrid}.
+
+\subsubsection{Application to UAV Swarm Path Planning}
+
+\begin{itemize}
+  \item \lead{Optimal paths} PSO plans short and safe paths for multiple vehicles
+        while respecting obstacle and mission-time constraints; PSO formulations
+        for simultaneous arrival and for minimizing mission time are common in
+        multi-UAV scenarios \cite{he2021novel}. An example is shown in
+        \cref{fig:pso-path}.
+  \item \lead{Distributed control and reconnaissance} Distributed PSO updates
+        adjust waypoints and commands online; cooperative PSO generates safe,
+        flyable paths that respect kinematic limits and are often smoothed with
+        B-splines for curvature continuity.
+  \item \lead{Controller and parameter tuning} Two-layer PSO frameworks tune the
+        parameters of an inner target-tracking loop, while an outer loop
+        optimizes the inner gains, enabling rapid gain synthesis across many
+        geometric paths.
+  \item \lead{Benchmarking} PSO is a standard baseline for comparison with newer
+        bio-inspired methods (such as pigeon-inspired optimization) in aerial
+        planning.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{pso-path-planning}
+  \caption{An example of path planning using PSO.}
+  \label{fig:pso-path}
+\end{figure}
+
+\subsection{Bee-Inspired Algorithms}
+
+Bee-inspired approaches mimic the division of labor and the recruitment of
+foragers through waggle-dance-like communication in order to balance exploration
+(scouts) and exploitation (employed and onlooker bees), producing robust global
+search dynamics with few hyperparameters \cite{liang2015efficient}.
+
+Honey-bee-based frameworks also include honey bee mating optimization (HBMO), the
+Bees Algorithm (BA), and bee-colony-inspired methods tailored to discrete
+constraints (e.g., time windows) in logistics \cite{liang2015efficient}.
+
+\subsubsection{Honey Bees and the Artificial Bee Colony (ABC)}
+
+ABC (Karaboga, 2005) divides the agents into employed bees (attached to food
+sources, i.e., the current solutions), onlookers (which select sources
+probabilistically according to their fitness), and scouts (which perform random
+exploration or re-initialization after an abandonment limit is reached); with the
+colony size and the number of cycles as its main control parameters, it delivers
+robust performance \cite{panigrahi2011handbook}.
+
+Its advantages include simplicity, robustness, and a small set of parameters,
+although the search can slow down near the optimum and diversity can decrease.
+Variants such as BCiA (for the vehicle routing problem with time windows,
+VRP-TW) and BA (for training neural networks) adjust the balance between
+exploration and exploitation and the problem encoding for discrete settings
+\cite{tripathy2020review}.
+
+\subsubsection{Hierarchical and Multi-Island ABC Models}
+
+Parallel and distributed ABC variants, by offloading evaluations, sharing elite
+solutions, and co-evolving subpopulations, improve the scalability of
+high-dimensional path planning, reducing the wall-clock time while preserving
+diversity \cite{liang2015efficient}.
+\begin{itemize}
+  \item \lead{Master--worker ABC} Central coordination parallelizes costly
+        evaluations and local searches on worker nodes to accelerate
+        time-critical planning \cite{panigrahi2011handbook}.
+  \item \lead{Multi-hive (multi-island) ABC} Independent hives periodically
+        migrate elite solutions and, through co-evolution, raise the quality of
+        the solutions while containing the growth of computation \cite{liang2015efficient}.
+  \item \lead{Hierarchical--hybrid ABC (HH-ABC)} Islands exchange elites at the
+        upper level, and each island internally runs a master--worker ABC,
+        combining diversification with parallel speedup at large scale
+        \cite{shahzad2023review}.
+\end{itemize}
+
+%-----------------------------------------------------------------------------
+\section{Graph-Based and Sampling-Based Methods}\label{sec:graph-sampling}
+
+Graph- and sampling-based planners convert continuous motion planning into a
+tractable discrete search by building graphs or trees in the free space; this
+approach is particularly effective in high-dimensional or geometrically complex
+environments, where cell grids or potential fields struggle \cite{taha2021path}.
+
+These methods offer probabilistic completeness or strong practical performance
+while remaining compatible with the decentralized execution that is common in
+swarms \cite{tripathy2020review}.
+
+\subsection{Probabilistic Roadmap (PRM)}
+
+PRM is a classical multi-query sampling-based planner that builds a roadmap of
+sampled collision-free configurations and connects them with local planners; it
+then links the start and goal points to the roadmap and finds a path through
+graph search. Its multi-query nature and relatively low query cost have made PRM
+a common backbone that is combined with metaheuristics or behavioral rules in
+multi-robot systems and swarms \cite{neto2017multi}.
+
+\subsubsection{Roadmap Construction in High-Dimensional Spaces}
+
+PRM tames the exponential growth of the configuration space with increasing
+degrees of freedom by random sampling, approximating the connectivity of $\Cfree$
+without an exhaustive search. The pipeline has two phases: a preprocessing phase,
+which builds the roadmap by sampling collision-free milestones and connecting
+nearby neighbors with a simple local planner, and a query phase, which connects
+the start and goal to the roadmap and runs a graph search for a feasible path
+\cite{neto2017multi}.
+
+The roadmap approximates a graph over $\Cfree$ whose vertices are the milestones
+and whose edges are feasible local connections; its completeness is
+probabilistic and improves with the number of samples and the connection radius
+\cite{neto2017multi}.
+\begin{itemize}
+  \item \lead{Managing complexity} Performance depends on the number and
+        placement of the milestones; informed samplers such as Medial-Axis PRM
+        (MAPRM) bias the samples toward the medial axis to increase safety
+        margins, yielding higher-quality roadmaps with fewer samples \cite{neto2017multi}.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.55\linewidth]{prm-example}
+  \caption{An example of the PRM algorithm in operation.}
+  \label{fig:prm}
+\end{figure}
+
+\subsubsection{Integration with Flocking and Shepherding}
+
+Roadmaps inject a global navigation structure into swarms that interact mainly
+locally, enabling coordinated homing, exploration and coverage, passage through
+narrow corridors, and shepherding strategies.\footnote{Shepherding: an external
+agent selects a path on the roadmap and, by issuing commands, guides the swarm
+along it, so that global guidance is blended with the local cohesion of the
+flock \cite{das2016hybrid}.} Flocks can traverse the edges of the roadmap while node-level
+rules for separation, alignment, and cohesion preserve the formation and spacing,
+especially in narrow regions or bottlenecks \cite{tan2024expected}.
+
+\emph{Coverage with roadmap weights:} the edges gain weight as robots traverse
+them, and the probabilistic selection of lower-weight edges gives priority to
+less-visited corridors, making coverage more efficient \cite{tripathy2020review}.
+
+\subsection{Rapidly-Exploring Random Trees (RRT)}
+
+RRT samples the state space and greedily extends a tree from the nearest node
+toward each sample, rapidly exploring unknown regions and quickly producing
+feasible (though not necessarily optimal) paths \cite{taha2021path}.
+
+RRT is probabilistically complete and accommodates kinodynamic constraints, which
+makes it practical for robots with dynamics and control limitations.
+
+\subsubsection{RRT and RRT-Connect for Single-Agent Queries}
+
+RRT views motion planning as a tree search that expands toward uniform samples
+and connects new states to their nearest neighbor using a local steering function
+subject to the constraints \cite{solovey2016finding}.
+
+RRT-Connect grows two trees, one from the start and one from the goal, and
+aggressively attempts to join them with its CONNECT heuristic, which reduces the
+search time compared with a single tree \cite{solovey2016finding}. The difference between RRT and
+RRT-Connect can be seen in \cref{fig:rrt}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\linewidth]{rrt-vs-rrt-connect}
+  \caption{Comparison of RRT and RRT-Connect.}
+  \label{fig:rrt}
+\end{figure}
+
+\subsubsection{Adaptations for Swarm Robotics (e.g., Virtual Tubes)}
+
+Distributed RRT enables decentralized collision avoidance: each agent plans while
+accounting for the other agents and the static obstacles, using local
+communication when needed \cite{shen2020synergistic}.
+
+In dynamic environments, \emph{grafting}---inserting new intermediate waypoints
+into an existing RRT path when the obstacles change---avoids complete replanning
+and enables real-time updates for multi-robot teams \cite{shen2020synergistic}.
+\begin{itemize}
+  \item \lead{Optimal virtual tube planning (OVTP) and Tube-\RRTstar} A
+        hierarchical approach first generates homotopic paths (e.g., with
+        \RRTstar) and then builds an ``optimal virtual tube'' that bounds safe,
+        obstacle-free corridors for the synthesis of a central path and for
+        distributed execution; Tube-\RRTstar{} trades off path length against the
+        cross-sectional area of the corridor in order to contain the swarm.
+\end{itemize}
+The computational complexity of tube planning is
+\begin{equation}
+  O\bigl(n(\log n + 1) + l\bigr),
+  \label{eq:tube-complexity}
+\end{equation}
+compared with the naive multi-path approach, whose complexity is
+\begin{equation}
+  O\bigl(n\,l\,(\log n + 1)\bigr).
+  \label{eq:multipath-complexity}
+\end{equation}
+
+\subsubsection{Sub-Optimal Algorithms for Higher Speed}
+
+\begin{itemize}
+  \item \lead{Multi-tree structures} Bidirectional RRT-Connect and three-tree
+        approaches parallelize exploration from multiple fronts and improve the
+        success rate in narrow passages \cite{taha2021path,yuan2020bilevel}.
+  \item \lead{Biased sampling} Goal biasing accelerates convergence;
+        obstacle-biased methods (e.g., Dangerzone RRT) steer the samples toward
+        the boundaries of obstacles so that narrow corridors are traversed
+        efficiently.
+  \item \lead{Roadmap-guided sampling} GVD-guided RRT uses the generalized
+        Voronoi diagram (GVD) as a heuristic backbone and greatly accelerates
+        planning in maze-like scenes.
+  \item \lead{Dynamic replanning} DRRT prunes and repairs only the invalidated
+        parts of the path when changes occur; ERRT resumes growth when the path
+        is blocked; and multipartite RRTs (MPRRT) combine fast pruning with
+        restart behavior to maintain responsiveness.
+\end{itemize}
+
+\subsection{The \texorpdfstring{\Astar}{A*} Algorithm and Grid-Based Methods}
+
+Deterministic graph and grid planners are fundamental for structured maps:
+\Astar{} yields optimal paths with the help of heuristics, and grids and cell
+decompositions provide discrete models that are suited to proofs of correctness
+and to integration with other planners. These methods are often used as
+baselines or as components of hybrid multi-robot path planning systems
+\cite{taha2021path,tripathy2020review}.
+
+\subsubsection{\texorpdfstring{\Astar}{A*} for Optimal Paths in Static Environments}
+
+\Astar{} evaluates nodes with $f(n) = g(n) + h(n)$, where $g(n)$ is the cost from
+the start and $h(n)$ is an admissible heuristic estimate of the cost to the goal;
+this guarantees completeness and optimality on graphs with nonnegative edge
+weights. An example of how this method works is shown in \cref{fig:astar}.
+
+With informed heuristics, \Astar{} is more efficient than Dijkstra's algorithm in
+large spaces, and it is often combined with fuzzy neural networks to speed up
+task completion and improve controllability and adaptability in multi-robot
+systems \cite{taha2021path}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.42\linewidth]{astar-grid}
+  \caption{Operation of the \Astar{} method in the presence of obstacles.}
+  \label{fig:astar}
+\end{figure}
+
+\subsubsection{Grid-Based Environment Representation}
+
+Grid maps discretize space into cells, turning continuous motion into a graph
+search for algorithms such as \Astar, \Dstar, or even ACO on grids, and they can
+be updated online to handle dynamics \cite{taha2021path}. The resolution is a critical
+trade-off between accuracy and computation or memory: a very fine grid is
+expensive and a very coarse one is inaccurate, which is why multi-resolution or
+hierarchical grids are attractive in practice \cite{tripathy2020review}.
+
+\subsubsection{Cell Decomposition Techniques (e.g., Boustrophedon, Morse)}
+
+Cell decomposition partitions $\Cfree$ into non-overlapping cells and builds an
+adjacency graph whose nodes are the cells and whose edges are adjacency
+relations; optimal paths are obtained by a graph search across the cells with
+methods such as Dijkstra's algorithm or \Astar{} \cite{taha2021path}.
+
+Boustrophedon decomposition supports exact coverage by sweeping and splitting the
+space at points where its connectivity changes, whereas Morse decompositions use
+the critical points of a Morse function to produce cells that are easily covered
+with simple patterns once entered \cite{taha2021path}.
+
+\subsubsection{Generalized Voronoi Diagrams (GVD) for Narrow Regions}
+
+The GVD partitions the free space into loci that are equidistant from the
+obstacles; by maximizing the safety margin, its edges and junctions serve as a
+roadmap for safe passage through cluttered environments and narrow passages
+\cite{breitenmoser2010voronoi}.
+
+Planning can move along the GVD, reach its edges near the goal, and then exit
+toward the goal. The GVD also guides sensor-based coverage, accelerates RRT in
+maze-like environments, and supports path-priority strategies for multiple robots
+in narrow passages \cite{breitenmoser2010voronoi}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\linewidth]{voronoi-narrow-regions}
+  \caption{Using Voronoi cells in narrow regions.}
+  \label{fig:voronoi}
+\end{figure}
+
+%-----------------------------------------------------------------------------
+\section{Potential Field Methods}\label{sec:potential-fields}
+
+Potential field planners, and particularly the artificial potential field (APF),
+turn path planning into gradient-following motion by defining deterministic,
+rule-based potentials. Their simplicity, fast computation, and real-time
+reactivity in dynamic scenes make them attractive for distributed swarms
+\cite{nazarahari2019multi}.
+
+In multi-robot systems, the APF is usually employed as a local planner or control
+law that integrates smoothly with higher-level graph or sampling planners or with
+metaheuristics, keeping the computational cost per agent low while preserving
+decentralized execution \cite{wang2022coordination}.
+
+\subsection{Artificial Potential Fields (APF)}
+
+The APF, pioneered by Khatib, remains the standard for geometric navigation based
+on force fields: the goal creates attraction in the configuration space, the
+obstacles create repulsion, and the motion commands are derived from the negative
+gradient of the potential \cite{he2021novel}.
+
+In multi-agent settings, the APF models inter-agent and agent--environment
+interactions as attractive--repulsive potentials, and gradient-based controls
+ensure formation, tracking, and collision avoidance with decentralized feedback
+\cite{wang2018research}.
+
+\subsubsection{Attractive and Repulsive Forces for Navigation}
+
+The APF defines a total potential $U(X)$ as the sum of attractive and repulsive
+components and computes the net control force as the negative gradient of this
+potential, so that the robot descends toward the goal while keeping away from the
+obstacles:
+\begin{equation}
+  U(X) = U_{\att}(X) + U_{\rep}(X), \qquad
+  F(X) = -\nabla U(X) = F_{\att}(X) + F_{\rep}(X).
+  \label{eq:apf}
+\end{equation}
+Here, $U_{\att}$ pulls the agent toward the goal, and $U_{\rep}$ increases sharply
+near the obstacles to preserve safety, providing smooth closed-loop motion that
+is suitable for real-time embedded control \cite{wang2022coordination}. A typical repulsive
+potential is
+\begin{equation}
+  U_{\rep}(X) =
+  \begin{cases}
+    \dfrac{1}{2}\,k_{\rep}\left(\dfrac{1}{d(X)} - \dfrac{1}{d_0}\right)^{2},
+      & d(X) \le d_0, \\[2.5ex]
+    0, & d(X) > d_0.
+  \end{cases}
+  \label{eq:apf-repulsive}
+\end{equation}
+Consequently, $\|\nabla U_{\rep}\|$ grows without bound as $d(X) \to 0$, which
+gives priority to collision avoidance near the boundaries \cite{zhao2020multi}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\linewidth]{apf-forces}
+  \caption{The force-field view of robot path planning: the target attracts and
+           the obstacle repels the robot.}
+  \label{fig:apf}
+\end{figure}
+
+\subsubsection{Principles of Obstacle Avoidance and Goal Seeking}
+
+\begin{itemize}
+  \item \lead{Goal seeking} $U_{\att}(X)$ is shaped so that the magnitude of the
+        attractive force is large far from the goal and zero at the goal; this
+        ensures natural deceleration and stopping at the potential minimum and
+        encodes precise capture of the goal in static scenes \cite{wang2022coordination}.
+  \item \lead{Obstacle avoidance} $U_{\rep}(X)$ grows rapidly as the distance to
+        the obstacles decreases and can vanish outside a radius of influence;
+        this design enforces separation because the repulsive gradient dominates
+        near the boundaries \cite{wang2018research}.
+  \item \lead{Known limitations} The classical APF may suffer from local minima
+        and is sensitive to parameter tuning, which can trap the robot away from
+        the global minimum; hybridization or adaptive shaping is commonly used in
+        practice to mitigate this problem \cite{zhao2020multi}.
+\end{itemize}
+
+\subsubsection{Improved Potential Field for Cooperative Target Hunting}
+
+To overcome local minima and embed multi-robot cooperation, improved potential
+fields (IPFs) add cooperation measures and problem-specific shaping, which enables
+coordinated target hunting by multi-AUV teams in turbulent, dynamic surface-water
+environments \cite{zhao2020multi}.
+
+A representative formulation of the total potential for AUV $R_i$ is the weighted
+combination
+\begin{equation}
+  U_i = \omega_{\alpha}\,U_{\alpha} + \omega_{\gamma}\,U_{\gamma},
+  \label{eq:ipf-total}
+\end{equation}
+where the attractive component $U_{\alpha}$ covers the exploration and
+target-tracking phases, and the repulsive component $U_{\gamma}$ combines
+cooperation degrees for dispersion, heading alignment (homodromy), and district
+difference (spatial distribution) with the density weights $\omega_{\gamma D}$,
+$\omega_{\gamma H}$, and $\omega_{\gamma DD}$ \cite{liu2018virtual}.
+
+The attractive component is defined piecewise as
+\begin{equation}
+  U_{\alpha}\left(X_{R_i}\right) =
+  \begin{cases}
+    \dfrac{1}{2}\,k_1\,\Phi\!\left(\dfrac{N_u}{N}, \dfrac{A}{\bar{A}}\right),
+      & \text{exploration}, \\[2.5ex]
+    \dfrac{1}{2}\,k_2 \left\| X_{R_i} - X_{T_l} \right\|^{2},
+      & \text{moving to the target},
+  \end{cases}
+  \label{eq:ipf-attractive}
+\end{equation}
+where $\Phi$ increases with the proportions of undetected targets and unexplored
+areas, and the target-tracking term uses a quadratic pull toward the assigned
+target $T_l$ \cite{liu2018virtual}.
+
+The repulsive and cooperative component is defined as
+\begin{equation}
+  U_{\gamma} =
+  \begin{cases}
+    \omega_{\gamma D} H_D + \omega_{\gamma H} H_H + \omega_{\gamma DD} H_{DD},
+      & \text{exploration}, \\[1.5ex]
+    \dfrac{1}{2}\,\kappa \left(\dfrac{1}{d} - \dfrac{1}{d_1}\right)^{2}
+      + \text{(cooperation terms)},
+      & \text{near obstacles},
+  \end{cases}
+  \label{eq:ipf-repulsive}
+\end{equation}
+where $H_D$ encourages spacing, $H_H$ increases the coherence of headings, and
+$H_{DD}$ promotes spatial distribution to prevent excessive concentration; the
+obstacle term explicitly maintains the safety margin \cite{liu2018virtual}.
+
+Performance evidence from Monte Carlo experiments with six AUVs, two dynamic
+targets, and obstacles in a $120 \times 120~\mathrm{m}^2$ area shows that the IPF
+reduces the path length and the hunting time compared with the classical
+potential field, indicating greater efficiency, robustness, and cooperation even
+when agents fail. The IPF also maintained high success rates under random layouts
+and dynamics, and it outperformed baseline PSO methods in obstacle-rich hunts
+while preserving collision-free pursuit and distributed coordination \cite{liu2018virtual}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.58\linewidth]{ipf-multi-auv}
+  \caption{The IPF algorithm for multi-AUV path planning.}
+  \label{fig:ipf}
+\end{figure}
+
+%-----------------------------------------------------------------------------
+\section{Reinforcement Learning and Deep Learning Approaches}\label{sec:learning}
+
+AI learning methods take path planning beyond fixed rules by allowing agents to
+optimize their behavior through experience, which makes them robust to
+uncertainty and environmental change in multi-robot systems. Reinforcement
+learning (RL) and its extensions are widely used for decentralized
+decision-making, real-time collision avoidance, and cooperative tasks in swarms
+\cite{he2021integral}.
+
+\subsection{Reinforcement Learning (RL)}
+
+RL formulates sequential decision-making as the optimization of the expected
+cumulative reward through repeated interaction with the environment, enabling
+data-driven improvement without labeled datasets. This adaptability makes RL
+effective in the dynamic, partially known, or adversarial environments that are
+common in real-world multi-robot deployments.
+
+\subsubsection{Learning Optimal Behaviors through Trial and Error}
+
+Agents learn policies $\pi(a \mid s)$ that maximize the objective
+\begin{equation}
+  \max_{\pi}\; \mathbb{E}_{\pi}\!\left[\sum_{t=0}^{\infty} \gamma^{t} r_t\right],
+  \qquad \gamma \in (0,1),
+  \label{eq:rl-objective}
+\end{equation}
+while exploration strategies ensure sufficient coverage of the state--action space
+during learning.
+
+Policy optimization can be value-based, policy-gradient, or actor--critic, and it
+is chosen according to the complexity of the task, the observability, and the
+properties of the action space. The goal of policy optimization is to compute a
+mapping $\pi^{*} : S \to A$ that maximizes the long-term return under the dynamics
+of the environment while balancing exploration and exploitation.
+\begin{itemize}
+  \item \lead{Adaptability} RL adapts to environmental changes by continuously
+        updating value functions or policy parameters, maintaining performance in
+        situations where classical planners would need costly replanning.
+  \item \lead{Learning without labels} RL does not require supervised learning
+        with labels; agents learn from numerical rewards that encode the task
+        objectives and safety constraints.
+\end{itemize}
+
+\subsubsection{Optimal Flight Paths for UAV Swarms}
+
+Multi-agent RL (MARL) with centralized training and decentralized execution
+(CTDE) supports cooperative navigation by training shared critics or common value
+baselines, while decentralized policies run on the individual UAVs \cite{xue2021multi}.
+
+MARL policies compute efficient coverage and routing for various map sizes and
+swarm sizes, improving mission time and battery consumption compared with
+hand-crafted rules \cite{xue2021multi}.
+\begin{itemize}
+  \item \lead{Cooperative navigation} CTDE allows agents to learn coordination
+        (e.g., collision-free formations and simultaneous arrival) while keeping
+        run-time control decentralized. This scheme is shown in \cref{fig:ctde}.
+  \item \lead{Coverage optimization} Learned policies maximize the reward for
+        first-visited cells and minimize repeated traversal, achieving scalable
+        area coverage \cite{xue2021multi}.
+  \item \lead{Hybrids and speed} Neural-network function approximation
+        accelerates Q-learning; a global neural network and heuristic Q-learning
+        variants speed up convergence and reduce the hardware requirements for
+        on-board deployment \cite{turki2016multi}.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{ctde}
+  \caption{The CTDE scheme: a centralized critic is trained on the observations
+           and actions of all agents, while each agent executes its own
+           decentralized actor.}
+  \label{fig:ctde}
+\end{figure}
+
+\subsubsection{Rewards and Interaction with the Environment}
+
+Reward design directly steers the learning process and must encode safety,
+efficiency, and cooperation for swarms. In coverage tasks, first-time visits
+usually receive larger rewards, collisions, oscillations, and deadlocks are
+penalized, and shaping terms are added to speed up learning.
+\begin{itemize}
+  \item \lead{Incentive mechanism} Positive rewards for progress toward the goal
+        and for coverage, and negative rewards for collisions or constraint
+        violations, lead to a stable improvement of the policy.
+  \item \lead{Credit assignment} Global team rewards can mask individual
+        contributions (``lazy agents'') and make credit assignment difficult in
+        swarms.
+  \item \lead{Solutions} Local rewards, heterogeneous reward components, and
+        difference rewards or agent-specific critics factor global objectives
+        into per-agent feedback, improving the stability and fairness of
+        learning.
+\end{itemize}
+
+\subsection{Deep Reinforcement Learning (DRL)}
+
+DRL, by integrating deep neural networks with RL, handles the high-dimensional
+observations, partial observability, and continuous control that are common in
+robotics and swarms. DRL reduces the reliance on static maps by learning from raw
+or learned features, and it supports real-time inference on embedded
+accelerators \cite{turki2016multi}.
+
+\subsubsection{Path Planning in Complex and Dynamic Environments}
+
+DRL scales to dynamic obstacles and narrow passages, where classical methods face
+slow convergence or limited representational capacity \cite{turki2016multi}.
+
+Typical progressions include the deep Q-network (DQN) with experience replay and
+Double DQN for greater stability, followed by actor--critic methods for
+continuous actions, such as DDPG and TD3 \cite{turki2016multi}.
+\begin{itemize}
+  \item \lead{High dimensionality} DRL learns collision avoidance and multi-agent
+        coordination directly from sensor and state embeddings, without
+        hand-crafted features or complete global maps \cite{turki2016multi}.
+  \item \lead{Limits of value-based approaches} DQN and Double DQN struggle in
+        continuous action spaces; policy-gradient methods (DDPG, TD3) mitigate
+        this problem but may under-explore in complex terrains \cite{turki2016multi}.
+\end{itemize}
+
+\subsubsection{Soft Actor-Critic (SAC) Algorithms for Continuous Actions}
+
+SAC promotes robust exploration in continuous control by maximizing a
+maximum-entropy objective, jointly optimizing the expected return and the entropy
+of the policy \cite{turki2016multi}:
+\begin{equation}
+  J(\pi) = \mathbb{E}_{\pi}\!\left[\sum_{t=0}^{\infty} \gamma^{t}
+           \Bigl(r_t + \alpha\, \mathcal{H}\bigl(\pi(\cdot \mid s_t)\bigr)\Bigr)\right],
+  \qquad \alpha > 0.
+  \label{eq:sac}
+\end{equation}
+\begin{itemize}
+  \item \lead{Exploration and robustness} Entropy regularization reduces
+        premature convergence to sub-optimal behaviors and improves performance
+        under non-stationary conditions.
+  \item \lead{Advanced variants (e.g., GAP\_SAC)} Practical improvements, such as
+        heuristic reward shaping, prioritized replay, and attention mechanisms,
+        accelerate convergence in complex, dynamic, and narrow environments.
+  \item \lead{Prioritized replay} Transitions are prioritized according to their
+        temporal-difference (TD) error, and the resulting replay bias is
+        corrected through importance sampling:
+        \begin{equation}
+          P(i) \propto \left|\delta_i\right|^{\alpha}.
+          \label{eq:per}
+        \end{equation}
+  \item \lead{State augmentation} Adding features such as the Euclidean distance
+        to the goal (DG) and the amount of heading correction (MA) improves
+        observability and planning performance for mobile robots \cite{tripathy2020review}.
+\end{itemize}
+
+\subsection{Imitation Learning (IL)}
+
+Imitation learning (IL), or learning from demonstration, learns policies from
+expert trajectories: instead of optimizing an unknown reward, it minimizes the
+discrepancy between actions, thereby reducing the cost of exploration and
+accelerating convergence in large, complex spaces. IL is well suited to
+multi-robot domains in which accurate experts (humans or centralized controllers)
+are available but online trial and error is costly or unsafe \cite{solovey2016finding}.
+
+\subsubsection{Learning from Expert Demonstrations}
+
+Given expert trajectories $\tau_i = \{(o_t, a_t)\}_{t=1}^{T}$, IL builds a dataset
+$D = \{(s_k, a_k)\}_{k=1}^{N}$ and trains a policy network by minimizing losses
+such as the mean squared error (for continuous actions) or the cross-entropy (for
+discrete actions) between the predicted and the expert actions \cite{taha2021path}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.88\linewidth]{imitation-learning}
+  \caption{The imitation learning approach: expert demonstrations form a training
+           dataset from which a policy $\pi_\theta(a_t \mid o_t)$ is learned by
+           supervised learning.}
+  \label{fig:il}
+\end{figure}
+
+In \cref{fig:il}, a driver takes action $a_t$ given the observation $o_t$, and,
+following the algorithm, the dataset $D$ is formed for the agent.
+
+In swarms, behavior cloning combined with graph neural encoders can distill
+centralized experts (e.g., APF-based flocking) into decentralized policies that
+are compatible with the constraints of local communication.
+\begin{itemize}
+  \item \lead{Advantages} IL bypasses exploration under sparse rewards and
+        produces strong initial policies that can be refined with RL if needed.
+  \item \lead{DAgger} Dataset aggregation iteratively queries the expert on the
+        states visited by the current policy and expands $D$, improving
+        generalization to out-of-distribution states \cite{shen2020synergistic}.
+\end{itemize}
+
+\subsubsection{A Two-Stage Framework for Multi-Target Search}
+
+A two-stage framework first uses deep learning to imitate a high-performing
+target strategy from behavioral data and then refines the weights of the learned
+network through evolutionary optimization to tune its performance in multi-target
+search \cite{shen2020synergistic}.
+
+For example, after a ReLU-based network (e.g., RNS) has been trained, an
+evolutionary optimizer such as the Guided Fireworks Algorithm (GFWA) refines its
+parameters to minimize metrics such as the mean number of iterations ($mI$)
+needed to find and collect all targets, yielding a final strategy (e.g., RNSE)
+whose efficiency and stability are close to those of the target strategy
+\cite{shen2020synergistic}.
+\begin{itemize}
+  \item \lead{Integration} This approach captures complex collective behaviors
+        from demonstrations and then uses evolutionary search to escape local
+        minima in the parameter space \cite{shen2020synergistic}.
+  \item \lead{Outcome} Reports show that the optimized IL strategy achieves high
+        success rates with stable convergence across random layouts and is
+        comparable or superior to the target strategy under swarm constraints
+        \cite{pintado2020first}.
+\end{itemize}
+
+%-----------------------------------------------------------------------------
+\section{Hybrid Approaches}\label{sec:hybrid}
+
+By integrating complementary algorithms, hybrid methods prevent premature
+convergence, exploit the structure of the problem, and scale to large spaces with
+dynamic obstacles. A common pattern pairs fast, consistent global planners with
+adaptive optimizers or learned policies for responsiveness and robustness in
+swarms \cite{tripathy2020review}.
+
+Hybrids are usually organized as either \emph{cooperative} (separate modules that
+exchange information) or \emph{embedded} (one method nested inside another), and
+they are chosen to optimize metrics such as duration, path length,
+curvature/smoothness, and real-time feasibility under constraints \cite{taha2021path}.
+
+\subsection{Integrating Multiple Path Planning Strategies}
+
+Large search spaces, nonholonomic constraints, moving obstacles, and local minima
+motivate combining deterministic structure with AI-based exploration or learning,
+in order to sustain performance at the scale of decentralized teams \cite{tripathy2020review}.
+
+Cooperative hybrids exchange guidance, costs, or partial plans between modules;
+embedded hybrids nest optimization or learning inside a deterministic core to
+adapt parameters online or reshape the costs, which yields faster convergence and
+higher success rates \cite{taha2021path}.
+
+\subsubsection{Combining Deterministic and AI Techniques}
+
+\begin{itemize}
+  \item \lead{Deterministic core} Graph and grid planners, cell decomposition,
+        and sampling guarantee feasibility---and sometimes optimality---in
+        structured regions, producing collision-free paths through efficient
+        graph search and local steering \cite{tripathy2020review}.
+  \item \lead{AI enhancement} Bio-inspired and learning methods (e.g., PSO,
+        genetic algorithms (GA), and RL or neural networks) inject exploration,
+        adaptive parameter tuning, and data-driven policies that generalize beyond
+        static environment models and cope with uncertainty and dynamics
+        \cite{taha2021path}.
+  \item \lead{Synergy} Deterministic layers provide initial feasible or short
+        paths and handle the constraints; AI layers refine, smooth, reweight, or
+        replan the path online, mitigating local minima and improving path
+        quality and execution time under disturbances \cite{tripathy2020review}.
+\end{itemize}
+
+\subsubsection{Example: FNN Combined with the \texorpdfstring{\Astar}{A*} Algorithm}
+
+A two-stage grid-based algorithm combines \Astar{} with a fuzzy neural network
+(FNN) to guarantee the feasibility of the shortest path while producing smoother
+and more controllable local motions than an FNN alone \cite{taha2021path}.
+\begin{itemize}
+  \item \lead{Typical pipeline} \Astar{} provides a short global path at a coarse
+        scale; the FNN is then applied on finer cells for smoothing and local
+        adaptation, reducing dead zones and motion jumps while preserving the
+        global optimality of the backbone path \cite{taha2021path}.
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\linewidth]{fnn-astar}
+  \caption{Block diagram of the FNN algorithm combined with \Astar.}
+  \label{fig:fnn-astar}
+\end{figure}
+
+\subsection{Other Hybrid Patterns and Evidence}
+
+\begin{itemize}
+  \item \lead{Deterministic--optimization hybrids} \Astar+APF, \Astar+RL,
+        \Astar+DWA, \Thetastar+dipole field and DWA, and sampling+optimization
+        combinations handle dynamic obstacles and curvature limits and improve
+        execution time in multi-robot settings while preserving smoothness
+        \cite{taha2021path}.
+  \item \lead{Optimization--optimization hybrids} WSA--APF, KA--SCA, ABC--EP,
+        MGSA--DWA, SOMA--PSO, GWO--WOA, and DWA--TLBO show better convergence,
+        shorter paths, fewer turns, and superior time efficiency compared with
+        single methods on benchmark maps and dynamic scenes \cite{taha2021path}.
+  \item \lead{Adoption rate} Hybrid techniques make up roughly 25\% of the
+        multi-robot path planning literature, and, because of their balance
+        between speed and quality, further study is recommended for
+        heterogeneous systems and dynamic targets \cite{taha2021path}.
+\end{itemize}
+
+%-----------------------------------------------------------------------------
+\section{Virtual Tube-Based Planning}\label{sec:virtual-tube}
+
+Virtual tube methods define obstacle-free corridors that act as macroscopic
+``containers'' for multi-robot motion, allowing global paths to be generated
+centrally while each agent executes in a decentralized manner inside the
+corridor. This idea is aligned with safe-corridor planning and with guidance based
+on homotopy classes, which lead groups through narrow passages while maintaining
+inter-robot distances and flow \cite{mao2022optimal}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\linewidth]{virtual-tube}
+  \caption{The virtual tube concept.}
+  \label{fig:virtual-tube}
+\end{figure}
+
+\Cref{fig:virtual-tube} shows the geometric and conceptual structure of a virtual
+tube for multi-robot path planning. The initial region (terminal
+$\mathcal{C}_0$) and the final region (terminal $\mathcal{C}_1$) are marked as
+the entry and exit terminals of the robot swarm. The main motion path of the
+robots is represented by the curve $\mathbf{h}\bigl((\mathbf{q}_0,
+\mathbf{q}_m), t\bigr)$, labeled as the trajectory, which runs from the start
+point $\mathbf{q}_0$ to the exit point $\mathbf{q}_m$.
+
+A cross section $\mathcal{C}_t$ of the tube along the path is singled out to show
+its capacity and the possibility of several robots passing through it
+simultaneously. The polyhedral structure of the tube and its cross sections
+highlights its ability to maintain separation and prevent congestion.
+
+\subsection{The Concept of Virtual Tubes}
+
+A virtual tube is a bounded region of free space that connects the start and goal
+regions and is constructed to maximize the safety margin and maintain acceptable
+cross sections along the path, so that many robots can pass through
+simultaneously without deadlock. Once the tube is available, path planning
+reduces to assigning each robot a feasible path that stays inside the corridor
+and respects minimum distances, which greatly simplifies downstream control and
+coordination \cite{mao2022optimal}.
+
+\subsubsection{Definition and Components}
+
+\begin{itemize}
+  \item \lead{Terminals} The start and goal regions, which delimit the entry and
+        exit sets of the swarm and are chosen as simple bounded regions so that
+        they can be filled without conflicts.
+  \item \lead{Mapping and assignment} Establishing entry--exit pairs between the
+        entry points in the start region and the exit points in the goal region,
+        which are often induced by a global planner that enumerates the homotopy
+        classes around the obstacles.
+  \item \lead{Paths and cross sections} A family of feasible paths inside the
+        corridor and their instantaneous cross sections, designed to remain
+        connected and sufficiently wide to prevent congestion and maintain
+        separation.
+\end{itemize}
+
+\subsubsection{Linear Tubes and the Interpolation Idea}
+
+In practice, many deployments use linear or piecewise-linear centerlines and
+polyhedral cross sections, so that the interior paths of the agents can be built
+from convex combinations of, or simple interpolations between, boundary
+references while preserving feasibility and spacing. This allows the planner to
+compute a small set of reference or boundary paths and then to synthesize many
+interior paths at low cost, which improves scalability for large swarms
+\cite{mao2022optimal}.
+
+\subsection{Optimal Virtual Tube Planning}
+
+OVTP selects safety-margin-aware corridors and a small set of reference paths,
+and it then efficiently generates the many robot paths so as to minimize
+congestion and computation while guaranteeing obstacle avoidance. This approach
+amortizes the heavy global search over the group and replaces independent global
+planning for each robot with a lightweight synthesis inside the tube \cite{mao2022optimal}.
+
+\subsubsection{Hierarchical Planning with MPC Tracking}
+
+A practical architecture computes the tube(s) and the reference paths centrally
+and then deploys distributed controllers (e.g., MPC) on each robot to track its
+assigned path and to enforce the tube and inter-robot constraints in real time
+\cite{gazi2015robot}.
+
+MPC naturally handles receding-horizon collision avoidance and adherence to the
+boundaries through inequality constraints, providing formation-like cohesion and
+robust tracking in the presence of dynamics and perception limitations \cite{gazi2015robot}.
+
+\subsubsection{Objectives: Computation, Volume, and Energy}
+
+\begin{itemize}
+  \item \lead{Computation} By reusing the same corridor and a small set of
+        references, the synthesis for each agent reduces to interpolation or
+        projection and local smoothing, which lowers the complexity compared with
+        complete replanning for every robot.
+  \item \lead{Minimum cross-sectional volume} Corridors are selected to preserve a
+        sufficient cross-sectional ``capacity'' at bottlenecks; margin-aware
+        backbones such as the GVD or homotopic paths preserve a safe tube
+        thickness.
+  \item \lead{Energy} Smooth curvature and non-crossing assignments reduce the
+        demands for acceleration and turning and improve energy efficiency while
+        maintaining throughput.
+\end{itemize}
+
+\subsubsection{Tube Networks for Complex Obstacles}
+
+When a single corridor is insufficient, multiple tubes form a network that splits
+the swarm into parallel routes around large obstacles and merges it again
+downstream, thereby reducing congestion and delay. Designing consistent
+assignments across the branches and avoiding internal crossings are essential for
+preserving the distinction between the boundary and the interior and for
+supporting safe merging behaviors.
+
+%-----------------------------------------------------------------------------
+\section{Summary}\label{sec:ch3-summary}
+
+This chapter reviewed and analyzed a wide range of path planning methods for
+swarm robotic systems. These methods were divided into three broad
+categories---deterministic, AI-based, and hybrid---each with its own distinctive
+characteristics and applications. Based on this analysis, the following
+conclusions can be drawn:
+\begin{enumerate}
+  \item \lead{Deterministic methods} Classical algorithms such as \Astar{} and
+        cell decomposition perform reliably in static, known environments and
+        guarantee that a path will be found. However, as discussed in
+        \cref{sec:global-local}, these methods suffer from problems such as high
+        computational cost and inflexibility in dynamic and complex environments.
+        Sampling-based algorithms such as \RRTstar{} have partially addressed
+        these challenges in high-dimensional spaces by striking a balance between
+        speed and optimality.
+  \item \lead{AI-based methods} This category---especially bio-inspired algorithms
+        such as PSO and ACO---is highly compatible with swarm robotics owing to
+        its distributed nature. The review showed that PSO, through its velocity
+        and position update formula (\cref{eq:pso}), enables fast convergence in
+        dynamic environments and, in most complex scenarios, succeeds in finding
+        the shortest path and the minimum time simultaneously. In addition,
+        reinforcement learning methods (RL and deep Q-learning) have shown great
+        potential for navigation in unknown environments without a prior map.
+  \item \lead{Hybrid methods} Hybrid approaches, which account for about 25\% of
+        recent research, integrate the strengths of deterministic and intelligent
+        methods in an attempt to overcome the limitations that each has on its
+        own.
+\end{enumerate}
+
+Finally, the choice of an appropriate method depends strongly on the type of
+mission (static or dynamic), on hardware limitations (processing and
+communication), and on system priorities (time versus energy consumption). For
+real-time applications and dynamic environments, hybrid and AI-based methods
+(especially PSO and \RRTstar) are considered the superior options.
