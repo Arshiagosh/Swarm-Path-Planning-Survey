@@ -18,7 +18,7 @@ centralized control \cite{nguyen2024swarm}.
 By mimicking foraging, flocking, and colony organization, bio-inspired algorithms
 navigate complex spaces without a global model of the environment, thereby
 achieving fast convergence and the ability to escape local minima for NP-hard
-combinatorial objectives in multi-robot teams \cite{tripathy2020review}.
+combinatorial objectives in multi-robot teams \cite{lin2022review}.
 
 These methods rely on decentralized decisions by the agents, local perception,
 and direct interaction or stigmergic signals, which together improve robustness,
@@ -248,7 +248,7 @@ although the search can slow down near the optimum and diversity can decrease.
 Variants such as BCiA (for the vehicle routing problem with time windows,
 VRP-TW) and BA (for training neural networks) adjust the balance between
 exploration and exploitation and the problem encoding for discrete settings
-\cite{tripathy2020review}.
+\cite{lin2022review}.
 
 \subsubsection{Hierarchical and Multi-Island ABC Models}
 
@@ -275,11 +275,11 @@ diversity \cite{liang2015efficient}.
 Graph- and sampling-based planners convert continuous motion planning into a
 tractable discrete search by building graphs or trees in the free space; this
 approach is particularly effective in high-dimensional or geometrically complex
-environments, where cell grids or potential fields struggle \cite{taha2021path}.
+environments, where cell grids or potential fields struggle \cite{abujabal2024path}.
 
 These methods offer probabilistic completeness or strong practical performance
 while remaining compatible with the decentralized execution that is common in
-swarms \cite{tripathy2020review}.
+swarms \cite{lin2022review}.
 
 \subsection{Probabilistic Roadmap (PRM)}
 
@@ -331,13 +331,13 @@ especially in narrow regions or bottlenecks \cite{tan2024expected}.
 
 \emph{Coverage with roadmap weights:} the edges gain weight as robots traverse
 them, and the probabilistic selection of lower-weight edges gives priority to
-less-visited corridors, making coverage more efficient \cite{tripathy2020review}.
+less-visited corridors, making coverage more efficient \cite{lin2022review}.
 
 \subsection{Rapidly-Exploring Random Trees (RRT)}
 
 RRT samples the state space and greedily extends a tree from the nearest node
 toward each sample, rapidly exploring unknown regions and quickly producing
-feasible (though not necessarily optimal) paths \cite{taha2021path}.
+feasible (though not necessarily optimal) paths \cite{abujabal2024path}.
 
 RRT is probabilistically complete and accommodates kinodynamic constraints, which
 makes it practical for robots with dynamics and control limitations.
@@ -393,7 +393,7 @@ compared with the naive multi-path approach, whose complexity is
 \begin{itemize}
   \item \lead{Multi-tree structures} Bidirectional RRT-Connect and three-tree
         approaches parallelize exploration from multiple fronts and improve the
-        success rate in narrow passages \cite{taha2021path,yuan2020bilevel}.
+        success rate in narrow passages \cite{abujabal2024path,yuan2020bilevel}.
   \item \lead{Biased sampling} Goal biasing accelerates convergence;
         obstacle-biased methods (e.g., Dangerzone RRT) steer the samples toward
         the boundaries of obstacles so that narrow corridors are traversed
@@ -414,7 +414,7 @@ Deterministic graph and grid planners are fundamental for structured maps:
 decompositions provide discrete models that are suited to proofs of correctness
 and to integration with other planners. These methods are often used as
 baselines or as components of hybrid multi-robot path planning systems
-\cite{taha2021path,tripathy2020review}.
+\cite{abujabal2024path,lin2022review}.
 
 \subsubsection{\texorpdfstring{\Astar}{A*} for Optimal Paths in Static Environments}
 
@@ -426,7 +426,7 @@ weights. An example of how this method works is shown in \cref{fig:astar}.
 With informed heuristics, \Astar{} is more efficient than Dijkstra's algorithm in
 large spaces, and it is often combined with fuzzy neural networks to speed up
 task completion and improve controllability and adaptability in multi-robot
-systems \cite{taha2021path}.
+systems \cite{abujabal2024path}.
 
 \begin{figure}[htbp]
   \centering
@@ -439,22 +439,22 @@ systems \cite{taha2021path}.
 
 Grid maps discretize space into cells, turning continuous motion into a graph
 search for algorithms such as \Astar, \Dstar, or even ACO on grids, and they can
-be updated online to handle dynamics \cite{taha2021path}. The resolution is a critical
+be updated online to handle dynamics \cite{abujabal2024path}. The resolution is a critical
 trade-off between accuracy and computation or memory: a very fine grid is
 expensive and a very coarse one is inaccurate, which is why multi-resolution or
-hierarchical grids are attractive in practice \cite{tripathy2020review}.
+hierarchical grids are attractive in practice \cite{lin2022review}.
 
 \subsubsection{Cell Decomposition Techniques (e.g., Boustrophedon, Morse)}
 
 Cell decomposition partitions $\Cfree$ into non-overlapping cells and builds an
 adjacency graph whose nodes are the cells and whose edges are adjacency
 relations; optimal paths are obtained by a graph search across the cells with
-methods such as Dijkstra's algorithm or \Astar{} \cite{taha2021path}.
+methods such as Dijkstra's algorithm or \Astar{} \cite{abujabal2024path}.
 
 Boustrophedon decomposition supports exact coverage by sweeping and splitting the
 space at points where its connectivity changes, whereas Morse decompositions use
 the critical points of a Morse function to produce cells that are easily covered
-with simple patterns once entered \cite{taha2021path}.
+with simple patterns once entered \cite{abujabal2024path}.
 
 \subsubsection{Generalized Voronoi Diagrams (GVD) for Narrow Regions}
 
@@ -763,7 +763,7 @@ of the policy \cite{turki2016multi}:
         \end{equation}
   \item \lead{State augmentation} Adding features such as the Euclidean distance
         to the goal (DG) and the amount of heading correction (MA) improves
-        observability and planning performance for mobile robots \cite{tripathy2020review}.
+        observability and planning performance for mobile robots \cite{lin2022review}.
 \end{itemize}
 
 \subsection{Imitation Learning (IL)}
@@ -780,7 +780,7 @@ are available but online trial and error is costly or unsafe \cite{solovey2016fi
 Given expert trajectories $\tau_i = \{(o_t, a_t)\}_{t=1}^{T}$, IL builds a dataset
 $D = \{(s_k, a_k)\}_{k=1}^{N}$ and trains a policy network by minimizing losses
 such as the mean squared error (for continuous actions) or the cross-entropy (for
-discrete actions) between the predicted and the expert actions \cite{taha2021path}.
+discrete actions) between the predicted and the expert actions \cite{abujabal2024path}.
 
 \begin{figure}[htbp]
   \centering
@@ -835,23 +835,23 @@ By integrating complementary algorithms, hybrid methods prevent premature
 convergence, exploit the structure of the problem, and scale to large spaces with
 dynamic obstacles. A common pattern pairs fast, consistent global planners with
 adaptive optimizers or learned policies for responsiveness and robustness in
-swarms \cite{tripathy2020review}.
+swarms \cite{lin2022review}.
 
 Hybrids are usually organized as either \emph{cooperative} (separate modules that
 exchange information) or \emph{embedded} (one method nested inside another), and
 they are chosen to optimize metrics such as duration, path length,
-curvature/smoothness, and real-time feasibility under constraints \cite{taha2021path}.
+curvature/smoothness, and real-time feasibility under constraints \cite{abujabal2024path}.
 
 \subsection{Integrating Multiple Path Planning Strategies}
 
 Large search spaces, nonholonomic constraints, moving obstacles, and local minima
 motivate combining deterministic structure with AI-based exploration or learning,
-in order to sustain performance at the scale of decentralized teams \cite{tripathy2020review}.
+in order to sustain performance at the scale of decentralized teams \cite{lin2022review}.
 
 Cooperative hybrids exchange guidance, costs, or partial plans between modules;
 embedded hybrids nest optimization or learning inside a deterministic core to
 adapt parameters online or reshape the costs, which yields faster convergence and
-higher success rates \cite{taha2021path}.
+higher success rates \cite{abujabal2024path}.
 
 \subsubsection{Combining Deterministic and AI Techniques}
 
@@ -859,28 +859,28 @@ higher success rates \cite{taha2021path}.
   \item \lead{Deterministic core} Graph and grid planners, cell decomposition,
         and sampling guarantee feasibility---and sometimes optimality---in
         structured regions, producing collision-free paths through efficient
-        graph search and local steering \cite{tripathy2020review}.
+        graph search and local steering \cite{lin2022review}.
   \item \lead{AI enhancement} Bio-inspired and learning methods (e.g., PSO,
         genetic algorithms (GA), and RL or neural networks) inject exploration,
         adaptive parameter tuning, and data-driven policies that generalize beyond
         static environment models and cope with uncertainty and dynamics
-        \cite{taha2021path}.
+        \cite{abujabal2024path}.
   \item \lead{Synergy} Deterministic layers provide initial feasible or short
         paths and handle the constraints; AI layers refine, smooth, reweight, or
         replan the path online, mitigating local minima and improving path
-        quality and execution time under disturbances \cite{tripathy2020review}.
+        quality and execution time under disturbances \cite{lin2022review}.
 \end{itemize}
 
 \subsubsection{Example: FNN Combined with the \texorpdfstring{\Astar}{A*} Algorithm}
 
 A two-stage grid-based algorithm combines \Astar{} with a fuzzy neural network
 (FNN) to guarantee the feasibility of the shortest path while producing smoother
-and more controllable local motions than an FNN alone \cite{taha2021path}.
+and more controllable local motions than an FNN alone \cite{abujabal2024path}.
 \begin{itemize}
   \item \lead{Typical pipeline} \Astar{} provides a short global path at a coarse
         scale; the FNN is then applied on finer cells for smoothing and local
         adaptation, reducing dead zones and motion jumps while preserving the
-        global optimality of the backbone path \cite{taha2021path}.
+        global optimality of the backbone path \cite{abujabal2024path}.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -897,15 +897,15 @@ and more controllable local motions than an FNN alone \cite{taha2021path}.
         \Astar+DWA, \Thetastar+dipole field and DWA, and sampling+optimization
         combinations handle dynamic obstacles and curvature limits and improve
         execution time in multi-robot settings while preserving smoothness
-        \cite{taha2021path}.
+        \cite{abujabal2024path}.
   \item \lead{Optimization--optimization hybrids} WSA--APF, KA--SCA, ABC--EP,
         MGSA--DWA, SOMA--PSO, GWO--WOA, and DWA--TLBO show better convergence,
         shorter paths, fewer turns, and superior time efficiency compared with
-        single methods on benchmark maps and dynamic scenes \cite{taha2021path}.
+        single methods on benchmark maps and dynamic scenes \cite{abujabal2024path}.
   \item \lead{Adoption rate} Hybrid techniques make up roughly 25\% of the
         multi-robot path planning literature, and, because of their balance
         between speed and quality, further study is recommended for
-        heterogeneous systems and dynamic targets \cite{taha2021path}.
+        heterogeneous systems and dynamic targets \cite{abujabal2024path}.
 \end{itemize}
 
 %-----------------------------------------------------------------------------
@@ -916,7 +916,7 @@ Virtual tube methods define obstacle-free corridors that act as macroscopic
 centrally while each agent executes in a decentralized manner inside the
 corridor. This idea is aligned with safe-corridor planning and with guidance based
 on homotopy classes, which lead groups through narrow passages while maintaining
-inter-robot distances and flow \cite{mao2022optimal}.
+inter-robot distances and flow \cite{mao2023optimal}.
 
 \begin{figure}[htbp]
   \centering
@@ -946,7 +946,7 @@ cross sections along the path, so that many robots can pass through
 simultaneously without deadlock. Once the tube is available, path planning
 reduces to assigning each robot a feasible path that stays inside the corridor
 and respects minimum distances, which greatly simplifies downstream control and
-coordination \cite{mao2022optimal}.
+coordination \cite{mao2023optimal}.
 
 \subsubsection{Definition and Components}
 
@@ -972,7 +972,7 @@ from convex combinations of, or simple interpolations between, boundary
 references while preserving feasibility and spacing. This allows the planner to
 compute a small set of reference or boundary paths and then to synthesize many
 interior paths at low cost, which improves scalability for large swarms
-\cite{mao2022optimal}.
+\cite{mao2023optimal}.
 
 \subsection{Optimal Virtual Tube Planning}
 
@@ -980,7 +980,7 @@ OVTP selects safety-margin-aware corridors and a small set of reference paths,
 and it then efficiently generates the many robot paths so as to minimize
 congestion and computation while guaranteeing obstacle avoidance. This approach
 amortizes the heavy global search over the group and replaces independent global
-planning for each robot with a lightweight synthesis inside the tube \cite{mao2022optimal}.
+planning for each robot with a lightweight synthesis inside the tube \cite{mao2023optimal}.
 
 \subsubsection{Hierarchical Planning with MPC Tracking}
 

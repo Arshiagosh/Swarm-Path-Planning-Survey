@@ -13,7 +13,7 @@ With complex obstacles, large search spaces, and unpredictable changes, the
 difficulty of path planning increases dramatically. In multi-robot systems,
 simultaneous operation creates a risk of collisions between the robots and with
 obstacles, which can lead to equipment damage, delays, or mission failure;
-collision avoidance therefore becomes a critical challenge \cite{lim2018swarm,liu2018virtual}.
+collision avoidance therefore becomes a critical challenge \cite{lee2018realtime,liu2018virtual}.
 
 \subsection{Obstacle Avoidance and Collision Resolution}
 
@@ -35,7 +35,7 @@ typically emphasize real-time adaptability and computational efficiency:
 \begin{itemize}
   \item \lead{Decentralization} The strategies are generally distributed and
         based on local information and communication constraints, which
-        contributes to robustness and adaptability \cite{lim2018swarm,liu2018virtual}.
+        contributes to robustness and adaptability \cite{lee2018realtime,liu2018virtual}.
   \item \lead{Real-time replanning} The rapidly-exploring random tree (RRT)
         algorithm and its variants have been adapted to operate in real time in
         dynamic environments. For example, one strategy grafts new waypoints
@@ -65,7 +65,7 @@ typically emphasize real-time adaptability and computational efficiency:
   \item \lead{Swarm coordination} Potential functions are used to guide swarms
         and to modify the desired positions of the robots so that they circumvent
         obstacles. Shape controllers employ several potential forces to maintain
-        the desired formation together with collision avoidance \cite{lim2018swarm,liu2018virtual}.
+        the desired formation together with collision avoidance \cite{lee2018realtime,liu2018virtual}.
 \end{itemize}
 
 \subsubsection{Obstacle Enlargement and Robot Shrinking}
@@ -88,7 +88,7 @@ size of the obstacles or of the robot in order to simplify collision checking
 \subsubsection{Optimal Reciprocal Collision Avoidance (ORCA)}
 
 The ORCA algorithm is a powerful and widely used variant of the reciprocal
-velocity obstacle (RVO) methods for collision-free navigation \cite{lim2018swarm,seebacher2025collective}.
+velocity obstacle (RVO) methods for collision-free navigation \cite{lee2018realtime,seebacher2025collective}.
 \begin{itemize}
   \item \lead{Mechanism} ORCA belongs to the class of algorithms that, assuming
         that the velocities of the neighbors are known and exchanged, select
@@ -132,7 +132,7 @@ of traditional multi-robot systems \cite{bhowmick2024bio,liu2018virtual}.
 \subsubsection{Adapting to Moving Targets and Changing Conditions}
 
 An important challenge arises when the targets, the obstacles, or the terrain are
-not fixed but change dynamically and unpredictably \cite{lim2018swarm,liu2018virtual,trilaksono2015distributed}.
+not fixed but change dynamically and unpredictably \cite{lee2018realtime,liu2018virtual,trilaksono2015distributed}.
 \begin{itemize}
   \item \lead{Handling dynamic changes} Swarm systems must react and adapt in real
         time to changes in the terrain, in environmental conditions (such as
@@ -158,12 +158,12 @@ local strategies for planning and replanning:
         extension of \Astar{} for handling changes efficiently. By updating the
         weights of the edges affected by newly observed obstacles, \Dstar{}
         repairs only the necessary parts of the path instead of replanning
-        completely \cite{lim2018swarm,liu2018virtual}.
+        completely \cite{lee2018realtime,liu2018virtual}.
   \item \lead{Sliding time windows} This strategy is combined with local
         optimizers such as ABC, PSO, and the fireworks algorithm (FWA) to solve
         multi-robot path planning in dynamic and unknown environments; a limited
         time window is used for local perception and prediction, which reduces
-        the need for costly global planning \cite{bhowmick2024bio,lim2018swarm}.
+        the need for costly global planning \cite{bhowmick2024bio,lee2018realtime}.
   \item \lead{RRT-based real-time replanning} The RRT family is well suited to
         dynamic environments because it accounts for the dynamic constraints of
         the robot; the grafting technique adds new waypoints to the existing path
@@ -185,11 +185,11 @@ strategies for real-time adaptation and rapid replanning.
 
 Path planning in dynamic environments is multifaceted: the environment changes
 because of external factors, moving targets, or the actions of the robots
-themselves \cite{lim2018swarm,liu2018virtual}.
+themselves \cite{lee2018realtime,liu2018virtual}.
 \begin{itemize}
   \item \lead{Need for real-time reaction} Algorithms must adapt quickly to
         changes; traditional deterministic methods often fail to adapt rapidly to
-        unexpected obstacles and are computationally expensive \cite{lim2018swarm,liu2018virtual}.
+        unexpected obstacles and are computationally expensive \cite{lee2018realtime,liu2018virtual}.
   \item \lead{Environmental instability} In applications such as SaR after
         natural disasters, the environment can change rapidly (falling debris,
         weather conditions, unexpected events), and the algorithms must allow the
@@ -197,7 +197,7 @@ themselves \cite{lim2018swarm,liu2018virtual}.
         \cite{bhowmick2024bio,liu2018virtual}.
   \item \lead{Adaptability and flexibility} The swarm must be flexible enough to
         cope with various tasks and situations and to adjust its paths as water
-        or air currents change or as obstacles appear \cite{lim2018swarm,liu2018virtual}.
+        or air currents change or as obstacles appear \cite{lee2018realtime,liu2018virtual}.
   \item \lead{Complexity of distributed control} Controlling groups of simple,
         reactive robots in a distributed structure is difficult, because the
         desired macroscopic behaviors emerge only from local interactions, and
