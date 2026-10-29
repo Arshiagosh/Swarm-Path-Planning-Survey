@@ -1,0 +1,24 @@
+% Two-stage A* + fuzzy neural network planner.
+\begin{tikzpicture}[font=\sffamily\footnotesize, >={Stealth[length=2mm]},
+    block/.style={draw=primary, fill=lightbg, minimum height=9mm, text width=28mm,
+                  align=center, inner sep=3pt},
+    stage/.style={draw=softgray, dashed, rounded corners=3pt, inner sep=6pt}]
+  \node[block] (map) at (0,0) {Grid map};
+  \node[block] (g1) at (3.8,0) {Coarse grid\\(first stage)};
+  \node[block] (as) at (3.8,-1.6) {\Astar{} search\\$f(n)=g(n)+h(n)$};
+  \node[block] (wp) at (3.8,-3.2) {Shortest coarse path\\(waypoints $p_i$)};
+  \node[block] (g2) at (8.9,0) {Fine grid around the\\path (second stage)};
+  \node[block] (fnn) at (8.9,-1.6) {FNN local planner\\(fuzzy rules + learning)};
+  \node[block] (out) at (8.9,-3.2) {Smooth path $y_m$\\sent to the robot};
+  \draw[->] (map) -- (g1);
+  \draw[->] (g1) -- (as);
+  \draw[->] (as) -- (wp);
+  \draw[->] (g1) -- node[above] {$N\times N$ cells} (g2);
+  \draw[->] (wp.east) -- ++(0.6,0) |- (fnn.west);
+  \draw[->] (g2) -- (fnn);
+  \draw[->] (fnn) -- (out);
+  \begin{scope}[on background layer]
+    \node[stage, fit=(g1)(as)(wp), label={[text=softgray]above:\Astar{} part}] {};
+    \node[stage, fit=(g2)(fnn)(out), label={[text=softgray]above:FNN part}] {};
+  \end{scope}
+\end{tikzpicture}

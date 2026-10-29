@@ -1,0 +1,36 @@
+% Centralized, decentralized and distributed control (processing units in red).
+\begin{tikzpicture}[font=\sffamily\small,
+    robot/.style={circle, draw=primary, fill=primary!25, minimum size=3.2mm, inner sep=0pt},
+    cpu/.style={circle, draw=accent, fill=accent!80, minimum size=4.4mm, inner sep=0pt},
+    link/.style={primary!60, thick}]
+  % (a) centralized
+  \begin{scope}
+    \node[cpu] (c) at (0,0) {};
+    \foreach \a in {0,45,...,315} {
+      \node[robot] (r\a) at (\a:1.25) {};
+      \draw[link] (c) -- (r\a);
+    }
+    \node at (0,-2.0) {(a) centralized};
+  \end{scope}
+  % (b) decentralized: several local hubs, each serving its own robots
+  \begin{scope}[xshift=4.6cm]
+    \foreach \h/\x/\y in {1/-0.9/0.7, 2/0.95/0.55, 3/0/-0.85} {
+      \node[cpu] (h\h) at (\x,\y) {};
+      \foreach \a in {0,72,...,288} {
+        \node[robot] (b\h-\a) at ($(\x,\y)+(\a+20*\h:0.75)$) {};
+        \draw[link] (h\h) -- (b\h-\a);
+      }
+    }
+    \draw[link, accent!70] (h1) -- (h2) -- (h3) -- (h1);
+    \node at (0,-2.0) {(b) decentralized};
+  \end{scope}
+  % (c) distributed: every robot is a processing unit
+  \begin{scope}[xshift=9.0cm]
+    \foreach \n/\x/\y in {1/-0.9/0.8, 2/0.2/1.0, 3/1.0/0.3, 4/-0.2/0.05, 5/-1.1/-0.5,
+                          6/0.1/-0.9, 7/1.1/-0.8}
+      \node[cpu] (d\n) at (\x,\y) {};
+    \foreach \a/\b in {1/2, 2/3, 1/4, 2/4, 3/4, 1/5, 4/5, 4/6, 5/6, 6/7, 3/7, 4/7}
+      \draw[link] (d\a) -- (d\b);
+    \node at (0,-2.0) {(c) distributed};
+  \end{scope}
+\end{tikzpicture}

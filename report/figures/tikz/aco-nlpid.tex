@@ -1,0 +1,22 @@
+% ACO tuning the gains of a nonlinear PID loop.
+\begin{tikzpicture}[font=\sffamily\footnotesize, >={Stealth[length=2mm]},
+    block/.style={draw=primary, fill=lightbg, minimum height=8mm, align=center, inner sep=3pt},
+    tuner/.style={block, fill=accent!10, draw=accent},
+    sum/.style={circle, draw=primary, minimum size=5mm, inner sep=0pt}]
+  \node (r) at (0,0) {$r(t)$};
+  \node[sum] (s) at (1.3,0) {};
+  \draw (s.north west) -- (s.south east) (s.north east) -- (s.south west);
+  \node[block] (pid) at (4.2,0) {NLPID controller};
+  \node[block] (plant) at (7.8,0) {Plant (flight simulator)};
+  \node (y) at (10.4,0) {$y(t)$};
+  \node[tuner] (aco) at (3.5,1.5) {Improved ACO};
+  \node[tuner] (tune) at (6.2,1.5) {Gain update};
+  \draw[->] (r) -- (s);
+  \draw[->] (s) -- node[above, pos=0.62] {$e(t)$} (pid);
+  \draw[->] (pid) -- node[above] {$u(t)$} (plant);
+  \draw[->] (plant) -- (y);
+  \draw[->] (9.6,0) -- (9.6,-0.9) -| node[pos=0.94, left] {$-$} (s);
+  \draw[->] (2.0,0) |- (aco.west);
+  \draw[->] (aco) -- (tune);
+  \draw[->] (tune.south) |- ($(pid.north)+(0.9,0.45)$) -- ($(pid.north)+(0.9,0)$);
+\end{tikzpicture}

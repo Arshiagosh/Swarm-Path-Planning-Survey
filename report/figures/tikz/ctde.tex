@@ -1,0 +1,28 @@
+% Centralized training with decentralized execution.
+\begin{tikzpicture}[font=\sffamily\footnotesize, >={Stealth[length=2mm]},
+    block/.style={draw=primary, fill=lightbg, minimum height=8mm, align=center,
+                  inner sep=3pt, rounded corners=1.5pt},
+    agent/.style={block, fill=white, text width=26mm},
+    actor/.style={block, fill=accent!10, draw=accent, text width=21mm},
+    panel/.style={draw=softgray, rounded corners=3pt, inner sep=7pt}]
+  \foreach \i/\y in {1/0, 2/-1.7, N/-3.6} {
+    \node[agent] (a\i) at (0,\y) {Agent $\i$: local\\observation $o_{\i}$, reward $r_{\i}$};
+    \node[actor] (p\i) at (3.9,\y) {Actor\\$\pi_{\i}(a_{\i}\mid o_{\i})$};
+    \draw[->] ([yshift=1.5mm]a\i.east) -- node[above] {$o_{\i}$} ([yshift=1.5mm]p\i.west);
+    \draw[<-] ([yshift=-1.5mm]a\i.east) -- node[below] {$a_{\i}$} ([yshift=-1.5mm]p\i.west);
+  }
+  \node at (0,-2.65) {$\vdots$};
+  \node at (3.9,-2.65) {$\vdots$};
+  \node[block, text width=31mm, minimum height=16mm] (critic) at (-4.6,-1.3)
+       {Centralized critic\\$Q(o_1,\dots,o_N,a_1,\dots,a_N)$};
+  \node[block, text width=26mm] (buf) at (-4.6,-3.6) {Shared replay buffer};
+  \foreach \i in {1,2,N} \draw[->, softgray] (a\i.west) -- (critic.east);
+  \draw[->, softgray] (buf) -- (critic);
+  \draw[->, dashed, accent] (critic.north) -- ++(0,0.95) -| node[pos=0.25, above]
+       {policy gradients (training only)} (p1.north);
+  \begin{scope}[on background layer]
+    \node[panel, fit=(critic)(buf), label={[text=softgray]below:training}] {};
+    \node[panel, fit=(a1)(aN)(p1)(pN),
+          label={[text=softgray]below:execution: each agent runs only its own actor}] {};
+  \end{scope}
+\end{tikzpicture}

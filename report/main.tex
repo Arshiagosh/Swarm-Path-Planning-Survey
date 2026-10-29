@@ -41,6 +41,14 @@
 \definecolor{softgray}{HTML}{6B7280}
 
 %=============================================================================
+% Drawings (schematic figures are TikZ sources in figures/tikz/)
+%=============================================================================
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,fit,backgrounds,shapes.geometric}
+\newcommand{\tikzfigure}[2][\linewidth]{%
+  \resizebox{#1}{!}{\input{figures/tikz/#2}}}
+
+%=============================================================================
 % Mathematics
 %=============================================================================
 \usepackage{amsmath,mathtools}         % AMS symbols come with newpxmath

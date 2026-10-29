@@ -1,0 +1,46 @@
+% Classification of path planning techniques, after Taha et al. (2021).
+\begin{tikzpicture}[
+    font=\sffamily\footnotesize,
+    box/.style={draw=primary!70, fill=lightbg, rounded corners=1.5pt, align=center,
+                minimum height=7mm, inner sep=2pt},
+    head/.style={box, fill=primary, text=white, font=\sffamily\small\bfseries},
+    cat/.style={box, fill=primary!15, font=\sffamily\footnotesize\bfseries, text width=27mm},
+    sub/.style={box, text width=23mm},
+    leaf/.style={box, draw=accent!60, fill=white, text width=17mm, minimum height=5.5mm},
+    edge/.style={-{Stealth[length=1.8mm]}, primary!70, thick}]
+  \node[head] (root) at (0,0) {Path planning techniques};
+  \node[cat] (det) at (-5.0,-1.3) {Deterministic approaches};
+  \node[cat] (ai)  at (0,-1.3)    {AI-based approaches};
+  \node[cat] (hyb) at (5.0,-1.3)  {Hybrid approaches};
+  \foreach \c in {det,ai,hyb} \draw[edge] (root.south) -- ++(0,-0.3) -| (\c.north);
+  % deterministic
+  \node[sub] (cd)  at (-5.8,-3.15) {Cell decomposition and graph search};
+  \node[sub] (apf) at (-5.8,-4.75) {Artificial potential fields};
+  \node[sub] (smp) at (-5.8,-6.45) {Sampling-based};
+  \foreach \k/\y/\t in {1/-2.25/\Astar, 2/-2.85/\Dstar, 3/-3.45/\Thetastar, 4/-4.05/Dijkstra}
+    \node[leaf] (c\k) at (-3.2,\y) {\t};
+  \foreach \k/\y/\t in {1/-5.85/PRM, 2/-6.45/RRT, 3/-7.05/\RRTstar}
+    \node[leaf] (s\k) at (-3.2,\y) {\t};
+  \foreach \k in {1,...,4} \draw[edge] (cd.east) -- (c\k.west);
+  \foreach \k in {1,...,3} \draw[edge] (smp.east) -- (s\k.west);
+  \draw[primary!70, thick] (det.south) ++(-1.6,0) coordinate (dtrunk) -- (dtrunk |- smp.west);
+  \foreach \n in {cd,apf,smp} \draw[edge] (dtrunk |- \n.west) -- (\n.west);
+  % AI-based
+  \node[sub] (ann) at (-0.4,-2.85) {Neural networks};
+  \node[sub] (rl)  at (-0.4,-4.25) {Reinforcement learning};
+  \node[sub] (bio) at (-0.4,-5.9)  {Bio-inspired algorithms};
+  \draw[primary!70, thick] (ai.south) ++(-1.6,0) coordinate (atrunk) -- (atrunk |- bio.west);
+  \foreach \n in {ann,rl,bio} \draw[edge] (atrunk |- \n.west) -- (\n.west);
+  \foreach \k/\y/\t in {1/-5.0/GA, 2/-5.6/ACO, 3/-6.2/PSO, 4/-6.8/ABC}
+    \node[leaf] (b\k) at (2.1,\y) {\t};
+  \foreach \k in {1,...,4} \draw[edge] (bio.east) -- (b\k.west);
+  % hybrid
+  \node[sub] (h1) at (4.6,-2.85) {Classical + optimization};
+  \node[sub] (h2) at (4.6,-4.25) {Several classical methods};
+  \node[sub] (h3) at (4.6,-5.65) {Several optimizers};
+  \draw[primary!70, thick] (hyb.south) ++(-1.6,0) coordinate (htrunk) -- (htrunk |- h3.west);
+  \foreach \n in {h1,h2,h3} \draw[edge] (htrunk |- \n.west) -- (\n.west);
+  \foreach \n/\t in {h1/Dijkstra--SA, h2/\Astar--APF, h3/GWO--WOA}
+    \node[leaf] (x\n) at (7.4,0 |- \n) {\t};
+  \foreach \n in {h1,h2,h3} \draw[edge] (\n.east) -- (x\n.west);
+\end{tikzpicture}

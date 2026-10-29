@@ -1,0 +1,16 @@
+% Imitation learning by behaviour cloning, with the DAgger loop.
+\begin{tikzpicture}[font=\sffamily\footnotesize, >={Stealth[length=2.2mm]},
+    block/.style={draw=primary, fill=lightbg, minimum height=10mm, align=center,
+                  inner sep=4pt, rounded corners=2pt, text width=26mm}]
+  \node[block] (exp) at (0,0) {Expert demonstrations\\(human or central controller)};
+  \node[block, text width=22mm] (data) at (3.7,0) {Dataset\\$D=\{(o_t,a_t)\}$};
+  \node[block] (sl) at (7.3,0) {Supervised learning\\(MSE or cross-entropy)};
+  \node[block, fill=accent!10, draw=accent, text width=20mm] (pol) at (10.7,0)
+       {Policy\\$\pi_\theta(a_t\mid o_t)$};
+  \draw[->, thick, accent!70] (exp) -- node[above] {$o_t, a_t$} (data);
+  \draw[->, thick, accent!70] (data) -- (sl);
+  \draw[->, thick, accent!70] (sl) -- (pol);
+  \draw[->, dashed, primary] (pol.south) -- ++(0,-0.75) -| node[pos=0.25, below]
+       {DAgger: roll out $\pi_\theta$, ask the expert to label the visited states, add them to $D$}
+       (data.south);
+\end{tikzpicture}

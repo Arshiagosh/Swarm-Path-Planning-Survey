@@ -1,0 +1,29 @@
+% A mechanical linkage and its virtual counterpart (after Liu et al., 2018).
+\begin{tikzpicture}[font=\sffamily\footnotesize]
+  \begin{scope}
+    \coordinate (j) at (0,1.6);
+    \draw[line width=4pt, accent!60, line cap=round] (j) -- (-0.9,0);
+    \draw[line width=4pt, accent!60, line cap=round] (j) -- (0.9,0);
+    \draw[fill=white, draw=primary, thick] (j) circle (0.12);
+    \draw[-{Stealth}, primary] ($(j)+(-115:0.55)$) arc (-115:-65:0.55);
+    \node[anchor=south] at ($(j)+(0,0.15)$) {joint};
+    \node[anchor=east] at (-0.6,0.8) {link 1};
+    \node[anchor=west] at (0.6,0.8) {link 2};
+    \node at (0,-0.45) {\bfseries linkage};
+  \end{scope}
+  \draw[{Stealth}-{Stealth}, thick, primary!60] (1.75,0.8) -- (2.95,0.8);
+  \begin{scope}[xshift=6.0cm]
+    \coordinate (j) at (0,1.6);
+    \draw[dashed, thick, primary] (j) -- (-0.9,0);
+    \draw[dashed, thick, primary] (j) -- (0.9,0);
+    \foreach \p in {(-0.9,0), (0.9,0), (-0.45,0.8), (0.45,0.8)}
+      \draw[fill=primary!20, draw=primary] \p circle (0.1);
+    \draw[fill=white, draw=accent, thick, densely dotted] (j) circle (0.14);
+    \draw[-{Stealth}, accent] ($(j)+(-115:0.55)$) arc (-115:-65:0.55);
+    \node at ($(j)+(0,-0.85)$) {$\Theta_d$};
+    \node[anchor=south] at ($(j)+(0,0.17)$) {virtual joint};
+    \node[anchor=east] at (-0.62,0.8) {virtual link 1};
+    \node[anchor=west] at (0.62,0.8) {virtual link 2};
+    \node at (0,-0.45) {\bfseries virtual linkage};
+  \end{scope}
+\end{tikzpicture}

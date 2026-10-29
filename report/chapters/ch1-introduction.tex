@@ -15,7 +15,7 @@ multi-robot systems.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.55\linewidth]{swarm-robotics-position}
+  \tikzfigure[0.55\linewidth]{swarm-position}
   \caption{The position of swarm robotics within mobile and multi-robot systems.}
   \label{fig:swarm-position}
 \end{figure}
@@ -70,17 +70,9 @@ nature-inspired, decentralized decision-making \cite{dias2021swarm,nguyen2024swa
 Drawing on nature, and based on observations and mathematical models of
 biological swarms, this field engineers corresponding coordination and
 problem-solving mechanisms for robotics. The success of natural systems in
-solving complex tasks in a decentralized manner provides templates for robust
-and adaptive robotic collectives. Examples of this phenomenon are shown in
-\cref{fig:nature} \cite{tan2013research}.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.78\linewidth]{nature-examples}
-  \caption{Examples of collective behavior in nature: ants, birds, fish, and a
-           herd of wildebeest.}
-  \label{fig:nature}
-\end{figure}
+solving complex tasks in a decentralized manner, from ant colonies and bee
+swarms to bird flocks, fish schools and herds of ungulates, provides templates
+for robust and adaptive robotic collectives \cite{tan2013research}.
 
 \subsection{Key Characteristics of Swarm Robotic Systems}
 
@@ -174,8 +166,8 @@ classification of path planning methods, following \cite{abujabal2024path}, is s
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=\linewidth]{path-planning-taxonomy}
-  \caption{Classification of path planning methods (adapted from \cite{abujabal2024path}).}
+  \tikzfigure{taxonomy}
+  \caption{Classification of path planning methods (redrawn after \cite{abujabal2024path}).}
   \label{fig:taxonomy}
 \end{figure}
 
@@ -195,7 +187,7 @@ the distributed architecture (the last case).
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.82\linewidth]{control-architectures}
+  \tikzfigure[0.82\linewidth]{control-architectures}
   \caption{Control architectures in multi-agent robotics: (a) centralized,
            (b) decentralized, and (c) distributed. Processing units are shown in
            red.}

@@ -85,17 +85,10 @@ robustness against failures or communication loss in large swarms \cite{bonabeau
 
 \subsubsection{Stigmergy in Natural and Artificial Swarms}
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{stigmergic-nest-model}
-  \caption{A model of stigmergic nest construction in wasps.}
-  \label{fig:nest}
-\end{figure}
-
 In natural systems, Grass\'e introduced stigmergy to explain nest reconstruction
 in termites: each building action turns the local configuration into a new
-stimulus that coordinates subsequent actions without any supervisor. This
-phenomenon can be observed in \cref{fig:nest} \cite{bonabeau1999swarm}.
+stimulus that coordinates subsequent actions without any supervisor
+\cite{bonabeau1999swarm}.
 
 Ant foraging is another important example: pheromone deposition and evaporation,
 acting as positive and negative feedback, give rise to self-organized trail
@@ -363,17 +356,9 @@ mean trajectory of the formation), while the micro layers execute avoidance,
 separation, and target pursuit, so that the autonomy and survivability of each
 autonomous underwater vehicle (AUV) are preserved.
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.78\linewidth]{auv-target-hunting}
-  \caption{Target hunting by hybrid algorithms: (a) initial conditions, (b) the
-           search paths of the AUVs, and (c) the final paths.}
-  \label{fig:auv-hunting}
-\end{figure}
-
-\Cref{fig:auv-hunting} shows an example of target hunting by AUVs using this
-approach: panel~(a) shows the initial conditions, panel~(b) the search paths of
-the AUVs, and panel~(c) the final paths.
+A worked example of this layering, cooperative target hunting by a team of
+AUVs with an improved potential field, is described in \cref{sec:potential-fields}
+\cite{ge2018multi}.
 
 \subsection{Virtual Structure and Virtual Linkage Approaches}
 
@@ -401,8 +386,9 @@ level. \Cref{fig:virtual-linkage} illustrates how a virtual linkage works.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.3\linewidth]{virtual-linkage}
-  \caption{A mechanical linkage and its virtual counterpart, the virtual linkage.}
+  \tikzfigure[0.55\linewidth]{virtual-linkage}
+  \caption{A mechanical linkage and its virtual counterpart, the virtual linkage
+           (redrawn after \cite{liu2018virtual}).}
   \label{fig:virtual-linkage}
 \end{figure}
 
@@ -491,17 +477,9 @@ hardware of each robot simple and inexpensive \cite{dias2021swarm}.
         s-bot/Swarm-bot systems \cite{sahin2005swarm,liu2018virtual}.
   \item \lead{Sound/ultrasonic} Acoustic links aid localization and messaging and
         can be combined with RF triggering for GPS-free distributed operation on
-        land and underwater. \Cref{fig:epuck} shows an e-puck robot that
-        communicates using sound \cite{liu2018virtual}.
+        land and underwater; the e-puck, for example, carries microphones and a
+        speaker that can be used for acoustic messaging \cite{sahin2007swarm}.
 \end{itemize}
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.46\linewidth]{e-puck}
-  \caption{The e-puck robot, with its microphones and speaker for acoustic
-           communication.}
-  \label{fig:epuck}
-\end{figure}
 
 \subsection{Communication Protocols and Network Topology}
 

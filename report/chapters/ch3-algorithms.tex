@@ -135,8 +135,9 @@ premature stagnation \cite{panigrahi2011handbook}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.88\linewidth]{aco-nlpid}
-  \caption{Using ACO to tune the parameters of an NLPID controller.}
+  \tikzfigure[0.88\linewidth]{aco-nlpid}
+  \caption{Using ACO to tune the parameters of an NLPID controller (redrawn after
+           \cite{panigrahi2011handbook}).}
   \label{fig:aco-nlpid}
 \end{figure}
 
@@ -611,13 +612,6 @@ when agents fail. The IPF also maintained high success rates under random layout
 and dynamics, and it outperformed baseline PSO methods in obstacle-rich hunts
 while preserving collision-free pursuit and distributed coordination \cite{liu2018virtual}.
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.58\linewidth]{ipf-multi-auv}
-  \caption{The IPF algorithm for multi-AUV path planning.}
-  \label{fig:ipf}
-\end{figure}
-
 %-----------------------------------------------------------------------------
 \section{Reinforcement Learning and Deep Learning Approaches}\label{sec:learning}
 
@@ -685,7 +679,7 @@ hand-crafted rules \cite{xue2021multi}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.85\linewidth]{ctde}
+  \tikzfigure[0.85\linewidth]{ctde}
   \caption{The CTDE scheme: a centralized critic is trained on the observations
            and actions of all agents, while each agent executes its own
            decentralized actor.}
@@ -784,15 +778,15 @@ discrete actions) between the predicted and the expert actions \cite{abujabal202
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.88\linewidth]{imitation-learning}
+  \tikzfigure[0.88\linewidth]{imitation-learning}
   \caption{The imitation learning approach: expert demonstrations form a training
            dataset from which a policy $\pi_\theta(a_t \mid o_t)$ is learned by
            supervised learning.}
   \label{fig:il}
 \end{figure}
 
-In \cref{fig:il}, a driver takes action $a_t$ given the observation $o_t$, and,
-following the algorithm, the dataset $D$ is formed for the agent.
+In \cref{fig:il}, the expert takes action $a_t$ given the observation $o_t$; the
+pairs $(o_t, a_t)$ form the dataset $D$ on which the policy is trained.
 
 In swarms, behavior cloning combined with graph neural encoders can distill
 centralized experts (e.g., APF-based flocking) into decentralized policies that
@@ -885,8 +879,9 @@ and more controllable local motions than an FNN alone \cite{abujabal2024path}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.95\linewidth]{fnn-astar}
-  \caption{Block diagram of the FNN algorithm combined with \Astar.}
+  \tikzfigure[0.95\linewidth]{fnn-astar}
+  \caption{Block diagram of the FNN algorithm combined with \Astar{} (redrawn after
+           the description in \cite{tan2016handbook}).}
   \label{fig:fnn-astar}
 \end{figure}
 
