@@ -51,22 +51,25 @@ to high-dimensional routing and discrete motion planning problems in robotics.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.95\linewidth]{aco-path-selection}
-  \caption{Pheromone accumulation and path selection in the ant colony
-           algorithm.}
+  \includegraphics[width=0.72\linewidth]{aco-path-selection}
+  \caption{A simulated double-bridge experiment: share of ants on the short
+           branch for 20 colonies (thin lines) and their mean (thick line).
+           Choices follow \cref{eq:trail-choice} with $k=20$, $\alpha=2$, and the
+           long branch is twice as long, so it receives half the pheromone per
+           crossing.}
   \label{fig:aco-path-selection}
 \end{figure}
 
 \Cref{fig:aco-path-selection} illustrates how ants select paths according to the
-pheromone concentration. In the first stage (panel~a), the ants choose their paths
-at random because there is no pheromone on the paths yet. The ants that traverse
-the shorter path (e.g., path BFC) then deposit more pheromone on it, so the
-pheromone concentration on this path gradually increases. As a result, in the
-subsequent iterations (panels~b and~c), more ants choose the shorter path, which
-accumulates the most pheromone. This mechanism creates a positive feedback loop,
-and eventually all ants choose the optimal path. These algorithmic dynamics
-reproduce the natural behavior of ants and form the basis of the ant colony
-optimization algorithm.
+pheromone concentration. At first, there is no pheromone on either branch, so the
+ants choose at random and the share on the short branch fluctuates around one
+half. Because a round trip over the short branch is quicker, it is reinforced
+more strongly per unit time (modelled here by a larger deposit), and the
+pheromone difference grows. This positive feedback makes later ants prefer the
+short branch, and after about a thousand crossings every simulated colony sends
+more than 90\% of its traffic over it. These dynamics, which reproduce the
+classical double-bridge experiments with real ants \cite{bonabeau1999swarm},
+form the basis of ant colony optimization.
 
 \subsubsection{Variants and Applications (AS-TSP, ACS-TSP)}
 
@@ -219,8 +222,12 @@ for $p_i$ and for the group are selected \cite{das2016hybrid}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.6\linewidth]{pso-path-planning}
-  \caption{An example of path planning using PSO.}
+  \includegraphics[width=\linewidth]{pso-path-planning}
+  \caption{PSO path planning: each particle encodes four waypoints between the
+           start and the goal, and the cost is the path length plus a penalty for
+           entering an inflated obstacle. (a) The best waypoints after 150
+           iterations, smoothed with a cubic B-spline; the grey dots are the final
+           positions of the swarm. (b) Convergence of the best cost.}
   \label{fig:pso-path}
 \end{figure}
 
@@ -315,7 +322,9 @@ probabilistic and improves with the number of samples and the connection radius
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.55\linewidth]{prm-example}
-  \caption{An example of the PRM algorithm in operation.}
+  \caption{PRM in a cluttered workspace: collision-free milestones are connected to
+           their ten nearest neighbours, and Dijkstra's algorithm finds the path on
+           the roadmap.}
   \label{fig:prm}
 \end{figure}
 
@@ -357,7 +366,9 @@ RRT-Connect can be seen in \cref{fig:rrt}.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\linewidth]{rrt-vs-rrt-connect}
-  \caption{Comparison of RRT and RRT-Connect.}
+  \caption{RRT and RRT-Connect in the workspace of \cref{fig:prm}, with the same
+           step size and random seed. RRT-Connect grows a tree from each end and
+           joins them with its CONNECT step, so it needs fewer iterations.}
   \label{fig:rrt}
 \end{figure}
 
@@ -431,8 +442,10 @@ systems \cite{abujabal2024path}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.42\linewidth]{astar-grid}
-  \caption{Operation of the \Astar{} method in the presence of obstacles.}
+  \includegraphics[width=0.9\linewidth]{astar-grid}
+  \caption{Dijkstra's algorithm and \Astar{} on the same 8-connected grid. Both
+           return the same optimal path, but the admissible octile heuristic lets
+           \Astar{} expand far fewer cells.}
   \label{fig:astar}
 \end{figure}
 
@@ -471,8 +484,11 @@ in narrow passages \cite{breitenmoser2010voronoi}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.75\linewidth]{voronoi-narrow-regions}
-  \caption{Using Voronoi cells in narrow regions.}
+  \includegraphics[width=0.85\linewidth]{voronoi-narrow-regions}
+  \caption{An approximate generalized Voronoi diagram, built from the ordinary
+           Voronoi diagram of points sampled on the obstacle boundaries. The path
+           follows the roadmap through the narrow door and keeps the largest
+           possible distance from the walls.}
   \label{fig:voronoi}
 \end{figure}
 
@@ -531,9 +547,12 @@ gives priority to collision avoidance near the boundaries \cite{zhao2020multi}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.7\linewidth]{apf-forces}
-  \caption{The force-field view of robot path planning: the target attracts and
-           the obstacle repels the robot.}
+  \includegraphics[width=\linewidth]{apf-forces}
+  \caption{The force-field view of robot path planning: the arrows show the
+           direction of $F = -\nabla U$. (a) The target attracts and the
+           obstacles repel the robot, which reaches the goal. (b) A U-shaped
+           obstacle creates a local minimum in which the same controller gets
+           stuck.}
   \label{fig:apf}
 \end{figure}
 
@@ -915,23 +934,23 @@ inter-robot distances and flow \cite{mao2023optimal}.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.8\linewidth]{virtual-tube}
-  \caption{The virtual tube concept.}
+  \includegraphics[width=0.9\linewidth]{virtual-tube}
+  \caption{A linear virtual tube with convex-hull terminals. Only the four vertex
+           trajectories (blue) are planned; each robot starts at a convex
+           combination of the vertices of $\mathcal{C}_0$ and follows the same
+           combination of the vertex trajectories (red).}
   \label{fig:virtual-tube}
 \end{figure}
 
-\Cref{fig:virtual-tube} shows the geometric and conceptual structure of a virtual
-tube for multi-robot path planning. The initial region (terminal
-$\mathcal{C}_0$) and the final region (terminal $\mathcal{C}_1$) are marked as
-the entry and exit terminals of the robot swarm. The main motion path of the
-robots is represented by the curve $\mathbf{h}\bigl((\mathbf{q}_0,
-\mathbf{q}_m), t\bigr)$, labeled as the trajectory, which runs from the start
-point $\mathbf{q}_0$ to the exit point $\mathbf{q}_m$.
-
-A cross section $\mathcal{C}_t$ of the tube along the path is singled out to show
-its capacity and the possibility of several robots passing through it
-simultaneously. The polyhedral structure of the tube and its cross sections
-highlights its ability to maintain separation and prevent congestion.
+\Cref{fig:virtual-tube} shows the geometric structure of a virtual tube. The
+start region (terminal $\mathcal{C}_0$) and the goal region (terminal
+$\mathcal{C}_1$) are the entry and exit sets of the swarm. Each robot moves
+along a trajectory $\mathbf{h}\bigl((\mathbf{q}_0, \mathbf{q}_m), t\bigr)$ from
+its start point $\mathbf{q}_0$ to its exit point $\mathbf{q}_m$, and the shaded
+polygons are cross-sections $\mathcal{C}_t$ of the tube at several times. Because
+every cross-section is convex and the tube avoids the obstacle, any robot that
+starts inside $\mathcal{C}_0$ stays inside the tube and away from the obstacle,
+and many robots can pass through it at the same time.
 
 \subsection{The Concept of Virtual Tubes}
 

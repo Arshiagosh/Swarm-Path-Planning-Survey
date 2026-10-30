@@ -142,22 +142,38 @@ where $\Phi$ is the incoming flux and $\mu$ is the evaporation rate; this leads
 to multiple equilibria and to symmetry breaking beyond a critical value of
 $\Phi$.
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.58\linewidth]{collective-choice-flow}
-  \caption{Flow analysis and the emergence of a collective choice.}
-  \label{fig:collective-choice}
-\end{figure}
-
-\Cref{fig:collective-choice} shows the traffic flows that produce a collective
-choice as a function of the individual deposition amount~$q$. The collective
-response (the vertical axis) is indicated by the flow becoming asymmetric over
-the two bridges, i.e.,
+With the substitutions $C_i \to k c_i$, $t \to \tau/\mu$ and
+$\varphi = \Phi/(k\mu)$, and with $\alpha = 2$ (the value measured for the ant
+\emph{Lasius niger}), the equilibria satisfy $c_1 + c_2 = \varphi$ and
+$(c_i - \varphi/2)(c_i^2 - \varphi c_i + 1) = 0$. Besides the symmetric
+``no-choice'' state $c_1 = c_2 = \varphi/2$, two asymmetric states
 \begin{equation}
-  \Delta C = \frac{\left|C_1 - C_2\right|}{C_1 + C_2}.
+  c_{1,2} = \tfrac{1}{2}\Bigl(\varphi \pm \sqrt{\varphi^2 - 4}\Bigr)
+  \label{eq:trail-equilibria}
+\end{equation}
+exist when $\varphi > 2$, and the symmetric state then becomes unstable
+\cite{garnier2007biological}. The collective response is measured by the
+asymmetry of the traffic over the two bridges,
+\begin{equation}
+  \Delta C = \frac{\left|C_1 - C_2\right|}{C_1 + C_2},
   \label{eq:asymmetry}
 \end{equation}
-A value of $\Delta C > 0$ indicates the emergence of a collective choice.
+so that $\Delta C > 0$ indicates the emergence of a collective choice.
+\Cref{fig:collective-choice} plots these equilibria and the resulting asymmetry
+$\Delta C = \sqrt{\varphi^2 - 4}/\varphi$; the dots are obtained by integrating
+the dimensionless model numerically from a slightly perturbed symmetric state.
+Since the critical flux is proportional to the evaporation rate, the faster the
+pheromone evaporates, the more ants are needed before a choice emerges.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{collective-choice-flow}
+  \caption{Pitchfork bifurcation of the trail model with $\alpha = 2$: (a)
+           equilibria of the flux on bridge~1 as a function of the incoming flux
+           $\varphi$, with numerical integration as dots; (b) the asymmetry
+           $\Delta C$, which becomes positive above $\varphi_c = 2$.}
+  \label{fig:collective-choice}
+\end{figure}
 
 %-----------------------------------------------------------------------------
 \section{Control Architectures for Swarm Robotics}\label{sec:control-architectures}
