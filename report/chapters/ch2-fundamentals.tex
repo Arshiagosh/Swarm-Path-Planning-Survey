@@ -51,6 +51,25 @@ an external memory and communication medium for these indirect interactions
         read from and write to a shared state \cite{sahin2005swarm}.
 \end{itemize}
 
+\subsubsection{Key Figures and Foundational Works}
+
+The conceptual foundation of swarm intelligence rests on a few works that bridged
+collective biological behavior and artificial systems:
+\begin{enumerate}
+  \item \lead{Beni and Wang} introduced the term \emph{swarm intelligence} in 1989,
+        while discussing cellular robotic systems \cite{beni1993swarm}.
+  \item \lead{Bonabeau, Dorigo, and Theraulaz} analyzed social-insect behavior in
+        \emph{Swarm Intelligence: From Natural to Artificial Systems} (1999) and
+        identified distributed functioning, flexibility, and robustness as the
+        defining traits of swarm-intelligent systems \cite{bonabeau1999swarm}.
+  \item \lead{Kennedy and Eberhart} proposed particle swarm optimization in 1995
+        and later consolidated the field in their book \emph{Swarm Intelligence}
+        (2001), which gave it much of its formal methodology
+        \cite{kennedy1995particle,kennedy2001swarm}.
+\end{enumerate}
+These analyses are still the theoretical basis on which the study of emergent
+intelligent behavior in multi-agent and robotic systems relies.
+
 \subsection{Principles of Self-Organization and Stigmergy}
 
 Self-organization explains the emergence of macroscopic order solely from local
@@ -85,10 +104,14 @@ robustness against failures or communication loss in large swarms \cite{bonabeau
 
 \subsubsection{Stigmergy in Natural and Artificial Swarms}
 
-In natural systems, Grass\'e introduced stigmergy to explain nest reconstruction
-in termites: each building action turns the local configuration into a new
-stimulus that coordinates subsequent actions without any supervisor
-\cite{bonabeau1999swarm}.
+In natural systems, Grass\'e introduced stigmergy (from the Greek
+\emph{stigma}, mark, and \emph{ergon}, work) to explain nest reconstruction in
+termites: the building activity is regulated not by the workers themselves but
+by the configuration of the nest, since each building action turns the local
+configuration into a new stimulus that triggers the next action without any
+supervisor \cite{grasse1959reconstruction,bonabeau1999swarm}. Nest cleaning and
+the clustering of corpses work the same way: the modified environment itself
+tells the other workers what remains to be done \cite{bonabeau1999swarm}.
 
 Ant foraging is another important example: pheromone deposition and evaporation,
 acting as positive and negative feedback, give rise to self-organized trail
@@ -119,6 +142,12 @@ Artificial implementations of stigmergy in swarms include:
         shared layer or map and use it as an external memory for indirect
         coordination \cite{bonabeau1999swarm,sahin2005swarm}.
 \end{itemize}
+Because the environment carries the information, stigmergy lowers the
+communication demands on each robot and helps the swarm stay scalable
+\cite{dias2021swarm}. It has been used for path formation between a nest and a
+goal, where robots themselves form chains or act as beacons
+\cite{nouyan2008path}, for collective cleaning \cite{sahin2007swarm}, and for
+self-assembly \cite{tan2013research}.
 
 A canonical mathematical model of trail-based stigmergy is as follows. Ants
 choose between two branches with a pheromone-weighted probability $p(C_i)$, and
@@ -225,7 +254,7 @@ connectivity assumptions \cite{hamann2018swarm}.
 Distributed flocking, by combining the simple rules of separation, alignment, and
 cohesion, or by imposing geometric constraints, maintains distances, headings,
 and shapes using only neighbor data and enables robust motion through unknown
-environments \cite{lee2018realtime}.
+environments \cite{reynolds1987flocks}.
 
 \subsubsection{Distributed Algorithms and Scalability}
 
@@ -242,7 +271,7 @@ exploit the concurrency of sensing and actuation \cite{hamann2018swarm}.
         remains predictable \cite{hamann2018swarm}.
   \item \lead{Local-only communication} Neighbor-to-neighbor exchange preserves
         scalability and avoids saturating a global channel, while still enabling
-        consensus, formation, and task allocation over graphs \cite{liu2018virtual}.
+        consensus, formation, and task allocation over graphs \cite{tan2013research}.
   \item \lead{Dynamic membership} Agents may join or leave; the protocols are
         recomputed with the current neighbors and have no hard dependence on
         specific members \cite{dias2021swarm}.
@@ -257,13 +286,18 @@ Continuous-time average consensus follows $\dot{x} = -Lx$, and its discrete-time
 counterpart $x_{k+1} = (I - \varepsilon L)\,x_k$ with step size $\varepsilon$
 converges if the graph is connected and the spectral conditions hold \cite{hamann2018swarm}.
 
-Whether in direct, message-based modes or in indirect modes based on density or
-motion, consensus is reached on choices such as waypoints or formation branches,
-reflecting collective decision-making \cite{hamann2018swarm}.
+Consensus achievement is also a collective decision-making behavior: the swarm
+must agree on one option among several, such as a path, a target, or a
+formation branch. It can be reached through direct communication, where robots
+exchange their preferences explicitly (for example by voting), or indirectly,
+where the decision emerges from cues such as the local density of robots
+\cite{brambilla2013swarm,hamann2018swarm}.
 
 Practical controllers estimate distributed quantities using local filters,
 event-triggered updates, or time-varying weights, in order to reduce bandwidth
-and to track changing goals stably and quickly \cite{liu2018virtual}.
+and to track changing goals stably and quickly. Dynamic average consensus
+estimators, for instance, let every robot estimate collective quantities such as
+the abstract shape of the swarm without a leader \cite{gudeta2021leaderless}.
 
 An example of event-triggered multi-robot control based on the adjacency matrix
 $A = [a_{ij}]$ is
@@ -274,7 +308,66 @@ $A = [a_{ij}]$ is
 \end{equation}
 which uses a triggering condition $g_i(t) > 0$ so that each robot updates and
 transmits only when necessary, and which guarantees position--velocity consensus
-through Lyapunov analysis \cite{liu2018virtual}.
+through Lyapunov analysis \cite{pan2018signal}.
+
+\subsection{Hierarchical Control Architectures}
+
+Hierarchical architectures sit between purely centralized and purely
+distributed control: one or more local coordinators organize the robots into
+functional clusters, which makes them a subset of decentralized architectures
+\cite{yan2013survey}. They are used to manage complexity, to integrate diverse
+functions in heterogeneous systems, and to give guarantees on global quantities
+in tasks such as formation flight or self-reconfiguration. The design usually
+proceeds top-down, from global objectives to components small enough for the
+individual agents \cite{brambilla2013swarm}.
+
+\subsubsection{Multi-Level Control for Formation Generation}
+
+In multi-level formation control, a high-level guidance layer handles global
+objectives, coordination, and the outer loops, often through a virtual leader
+that provides the reference trajectory of the formation; a low-level layer runs
+the inner loops (attitude control and local trajectory tracking) under tight
+real-time requirements. The followers adjust their positions and velocities using
+the virtual leader and their neighbors \cite{liu2019distributed,rezaei2025novel}. This split
+compensates for the limited processing power of embedded platforms and makes it
+easier to implement high-level algorithms. In the same spirit, algorithms are
+often developed on a hierarchy of models of increasing realism before they are
+ported to real robots \cite{hamann2018swarm}.
+
+\subsubsection{Example: The Five-Layer Software of SambotII}
+
+The self-assembly modular robot SambotII upgraded the computing and perception
+of its predecessor with an Intel x86 dual-core processor for computation-heavy
+tasks such as image processing and path planning. Its software is organized in
+five layers with uniform abstract interfaces between them: a hardware
+abstraction layer that hides the motor, encoder, and camera details, a module
+abstraction layer, an operation layer, a behavior layer, and a task layer. The
+layering improves programming efficiency, reliability, and reuse
+\cite{tan2018sambotii}.
+
+\subsubsection{Hierarchical Action Selection Process (HASP)}
+
+HASP is a behavioral mechanism that coordinates a set of elementary controllers
+in a hierarchical and flexible way, both inside each robot and across the
+group. A higher-level behavior hands control to a lower-level one only when it
+issues a \emph{refuge command}, which moves the robot toward a reliable
+\emph{refuge position}; this keeps the resulting actions viable even in highly
+dynamic multi-robot interactions. Adding a mechanism for fusing actions gives
+the hybrid and hierarchical variant (Hybrid-HASP), in which several behaviors
+can act at the same time; both were evaluated on the cooperative box-pushing
+task \cite{tan2016handbook}.
+
+\subsubsection{Multilevel Topology Design for Shape Control}
+
+For shape control, robots can be organized in concentric levels that grow
+outward as the swarm grows, a structure inspired by the hexagonal close-packing
+of atoms, which aggregates robots in the least space and scales naturally. The
+robots first converge to the desired region and then form the shape level by
+level; different shapes are produced by allocating robots to allowed positions
+and marking the others as virtually occupied. A controller built from several
+potential forces drives the robots to their positions without collisions, and a
+dedicated shape-regulation force removes the local minima in which robots would
+otherwise get stuck \cite{tan2016handbook}.
 
 \subsection{Behavior-Based Control Methods}
 
@@ -283,12 +376,16 @@ reactive behaviors rather than global plans, keeping the system simple, robust,
 and responsive in unknown or dynamic environments \cite{hamann2018swarm}.
 
 BBC is aligned with local sensing/actuation and emergent coordination, which are
-hallmarks of scalable swarm operation. Subsumption-style layering prioritizes
-behaviors (e.g., obstacle avoidance above exploration): the behaviors run
-concurrently, but higher-priority behaviors suppress lower-priority ones and
-release them once the stimulus disappears. Iterative refinement at the robot
-level---tuning behaviors and thresholds---produces reliable collective patterns
-without a global model or explicit global synchronization \cite{nguyen2024swarm}.
+hallmarks of scalable swarm operation, and it is the most common way of
+designing swarm robotic systems: the designer implements, studies, and refines
+the behavior of each robot, bottom-up, until the desired collective behavior
+emerges \cite{brambilla2013swarm}. Brooks' subsumption architecture is the
+classical example of layering behaviors by priority (e.g., obstacle avoidance
+above exploration): the behaviors run concurrently, but higher-priority behaviors
+suppress lower-priority ones and release them once the stimulus disappears
+\cite{brooks1986robust}. Iterative refinement at the robot level---tuning
+behaviors and thresholds---produces reliable collective patterns without a global
+model or explicit global synchronization \cite{nguyen2024swarm}.
 
 \subsubsection{Reactive Behaviors for Emergent Intelligence}
 
@@ -297,7 +394,7 @@ to actions through condition--action rules and avoid complex world models, so
 that they remain replicable across large teams \cite{hamann2018swarm}. Emergent behaviors
 such as flocking, dispersion, trail formation, and collective decision-making
 arise from many local interactions rather than from a single global planner
-\cite{lee2018realtime}.
+\cite{bhowmick2024bio}.
 
 Artificial potential fields (APFs) superimpose attractive forces toward goals and
 repulsive forces from obstacles and peers to provide safe distributed navigation
@@ -311,14 +408,19 @@ transitions are triggered by sensor events, timers, or messages, which ensures
 predictable responsiveness with a simple architecture \cite{hamann2018swarm}. Probabilistic
 FSMs (PFSMs) add stochastic transitions to model noise and variability and
 facilitate the analysis of convergence and robustness in aggregation, chaining,
-or allocation tasks \cite{hamann2018swarm}.
+or allocation tasks \cite{hamann2018swarm}. Two kinds are used: in one, the
+transition probabilities stay fixed; in the other, they change with inputs from
+the environment and from other robots \cite{brambilla2013swarm}. Composing simple
+automata into a model of the whole system is also the basis of supervisory
+control theory, which has been applied to swarm robotics to synthesize
+controllers with formal guarantees \cite{lopes2016supervisory}.
 
 \subsubsection{Response Threshold Models}
 
 Response threshold models link an agent's probability of switching tasks to the
 intensity of a stimulus, producing decentralized and flexible task allocation in
 which task sequencing emerges from the accumulation of collective stimuli
-\cite{hamann2018swarm}. The standard nonlinearity is
+\cite{brambilla2013swarm,bonabeau1999swarm}. The standard nonlinearity is
 \begin{equation}
   p(s) = \frac{s^{\beta}}{s^{\beta} + \theta^{\beta}},
   \label{eq:response-threshold}
@@ -356,16 +458,23 @@ and density-based partial differential equation (PDE) formulations for
 quantifying and bounding macroscopic performance under distributed execution
 \cite{hamann2018swarm}.
 
-\subsubsection{Applications: Multi-AUV Underwater Missions}
+\subsubsection{Applications: Underwater Mine Countermeasures}
 
 Hybrid control excels underwater, where uncertain currents, limited
 communication, and safety-critical sensing require both local reaction and
-macroscopic coordination for cooperative target hunting or survey coverage
-\cite{liu2018virtual}.
+macroscopic coordination \cite{tan2004evaluation}. For underwater mine
+countermeasures, a subsumption architecture was embedded in a statistical
+controller that regulates the mean and the variance of the swarm's position.
+The subsumption layer orders the robot's tasks so that mine and obstacle
+avoidance come before aggregation, separation, and random search. When one robot
+has to swerve around an obstacle, the statistical layer makes the rest of the
+swarm regroup, so the individual gets the latitude it needs while the swarm mean
+stays where it should; the combination performed better than either method
+alone \cite{tan2004evaluation}.
 
 Event-triggered and consensus-based schemes reduce bandwidth while maintaining
-formation and tracking, and reactive potential fields provide on-the-spot
-avoidance of obstacles and hazards \cite{liu2018virtual}.
+formation and tracking \cite{pan2018signal}, and reactive potential fields
+provide on-the-spot avoidance of obstacles and hazards.
 
 In such implementations, the macro layer regulates group objectives (e.g., the
 mean trajectory of the formation), while the micro layers execute avoidance,
@@ -375,6 +484,19 @@ autonomous underwater vehicle (AUV) are preserved.
 A worked example of this layering, cooperative target hunting by a team of
 AUVs with an improved potential field, is described in \cref{sec:potential-fields}
 \cite{ge2018multi}.
+
+\subsubsection{Hybrid Systems with Real and Virtual Agents}
+
+Validating controllers for large swarms experimentally is slow and expensive, so
+many macroscopic methods (for example continuum models that approximate the
+swarm by partial differential equations) are tested only in simulation. A mixed
+reality platform offers an intermediate step: a few real differential-drive
+robots share the arena with many virtual agents, a multi-agent version of
+hardware-in-the-loop testing. In one such platform, four robots and 96 virtual
+agents formed a swarm of 100 that interacted through a repulsive kernel; a
+continuification-based controller computed the desired positions and velocities,
+which the robots tracked with their embedded controllers, and the swarm achieved
+the desired density in the plane \cite{maffettone2023hybrid}.
 
 \subsection{Virtual Structure and Virtual Linkage Approaches}
 
@@ -398,7 +520,10 @@ reduces communication compared with recomputing the slot of every member
 
 VL decouples precise control from global design, offers a compact command space
 for frequent changes of shape, and keeps execution distributed at the robot
-level. \Cref{fig:virtual-linkage} illustrates how a virtual linkage works.
+level. \Cref{fig:virtual-linkage} illustrates how a virtual linkage works. In a
+serial linkage, the number of degrees of freedom equals the number of virtual
+joints, that is, the number of virtual links minus one, so more links allow more
+formation shapes \cite{liu2018virtual}.
 
 \begin{figure}[htbp]
   \centering
@@ -408,6 +533,31 @@ level. \Cref{fig:virtual-linkage} illustrates how a virtual linkage works.
   \label{fig:virtual-linkage}
 \end{figure}
 
+\subsubsection{The Virtual Structure as a Special Case}
+
+A virtual linkage whose joint angles are held constant behaves as a single rigid
+body, and a linkage with a single link ($k = 1$) is exactly a virtual structure,
+with no ability to reconfigure. The two differ sharply in communication: to
+change shape, a virtual structure must redesign and transmit new relative
+positions to every agent, whereas a virtual linkage broadcasts only the joint
+angles to the $k$ link controllers. The analysis in \cite{liu2018virtual} shows
+that the linkage needs less than a third (33.3\%) of the bandwidth of a virtual
+structure to reconfigure a formation, which makes it attractive when the shape
+must change often.
+
+\subsubsection{Decentralization and Open Directions}
+
+The first virtual-linkage implementation was hierarchical: a linkage server sent
+states to link servers, which forwarded them to the members of each link. This
+is better than a centralized virtual structure but still limits scalability and
+is vulnerable to bandwidth limits and lost messages. A decentralized version
+removes the servers: every agent runs the same consensus algorithm, computes its
+own instance of the linkage states from information exchanged with its
+neighbors, and decides its motion on its own, so no roles have to be assigned
+\cite{liu2018decentralization}. The authors point to formation feedback, the
+dynamic generation of formation patterns, and route planning in unknown
+environments as the next steps \cite{liu2018virtual,liu2018decentralization}.
+
 %-----------------------------------------------------------------------------
 \section{Communication and Sensing in Swarms}\label{sec:communication}
 
@@ -416,7 +566,7 @@ intelligence manifests itself in swarms; local exchange and interaction mirror
 the decentralized organization found in nature. The chosen control architecture
 fixes the topology of information exchange and hence the performance, so
 reliable, fault-tolerant communication is essential for effective coordination
-at scale \cite{ge2018multi}.
+at scale \cite{tan2013research,bhowmick2024bio}.
 
 \subsection{Local Interactions and Limited Communication}
 
@@ -455,7 +605,7 @@ Decentralized swarms face predictability challenges because abundant local
 interactions create nonlinear, emergent dynamics that are difficult to control
 and predict in advance. This complexity stems from micro-to-macro coupling, in
 which macroscopic behavior emerges from microscopic decisions made under limited
-information and a changing topology \cite{ge2018multi,hamann2018swarm}.
+information and a changing topology \cite{kolling2016human,brambilla2013swarm}.
 \begin{itemize}
   \item \lead{Unpredictable emergence} Undesired global patterns can emerge from
         large numbers of simultaneous local interactions, complicating formal
@@ -487,10 +637,11 @@ hardware of each robot simple and inexpensive \cite{dias2021swarm}.
         support distributed coordination under local rules.
   \item \lead{Radio frequency (RF)} IEEE 802.15.4-class radios on platforms such
         as the e-puck are often configured with power control for very short
-        ranges (up to a few tens of centimeters) to enforce locality \cite{liu2018virtual}.
+        ranges (down to about fifteen centimeters) to enforce locality
+        \cite{sahin2007swarm}.
   \item \lead{Infrared (IR)} Short-range messaging and proximity sensing,
         including mutual ranging and neighbor discovery, as in the
-        s-bot/Swarm-bot systems \cite{sahin2005swarm,liu2018virtual}.
+        s-bot/Swarm-bot systems \cite{sahin2005swarm,mondada2003swarmbot}.
   \item \lead{Sound/ultrasonic} Acoustic links aid localization and messaging and
         can be combined with RF triggering for GPS-free distributed operation on
         land and underwater; the e-puck, for example, carries microphones and a
@@ -503,14 +654,14 @@ Swarm performance depends strongly on the communication architecture and on the
 network topology it induces; together, they determine how information flows, how
 quickly consensus forms, and how resilient coordination is to faults. The
 co-design of protocol and topology must account for motion-induced changes and
-bandwidth constraints in order to maintain stability and throughput \cite{ge2018multi}.
+bandwidth constraints in order to maintain stability and throughput \cite{tan2013research}.
 
 \subsubsection{Decentralized Communication Protocols}
 
 Decentralized protocols allow robots to exchange data without a central broker,
 producing robust, scalable, low-latency coordination. The categories include
 direct messaging, indirect stigmergy, and direct physical interaction, which are
-often combined for redundancy and adaptability \cite{hamann2018swarm,dias2021swarm,ge2018multi}.
+often combined for redundancy and adaptability \cite{brambilla2013swarm,dias2021swarm}.
 \begin{itemize}
   \item \lead{Direct peer-to-peer communication} Explicit exchange of states,
         events, or votes reduces latency and enables rapid reactions to local
@@ -534,7 +685,7 @@ analysis based on the adjacency matrix $A$ and the Laplacian $L = D - A$ (where
 $D$ is the degree matrix) to support convergence proofs for distributed
 controllers. The choice of graph and its connectivity determine the stability
 and convergence rates of consensus, formation, and distributed estimation
-\cite{hamann2018swarm}.
+\cite{mesbahi2010graph,bullo2009distributed}.
 \begin{itemize}
   \item \lead{Graph types} Undirected graphs model bidirectional exchange and
         directed graphs (digraphs) model one-way flow; the spectral properties of
@@ -545,21 +696,24 @@ and convergence rates of consensus, formation, and distributed estimation
         are closer than $r$.
   \item \lead{Leader--follower structure} A leader guides the collective motion
         and the followers track it using the leader's state and data from their
-        neighbors; convergence in directed networks usually requires a directed
-        spanning tree rooted at the leader.
+        neighbors; the leader usually receives nothing from the followers, and
+        convergence in directed networks requires a directed spanning tree rooted
+        at the leader \cite{li2014cooperative}.
 \end{itemize}
 
 \subsubsection{Network-Theoretic Approach to Information Flow}
 
-The network-theoretic perspective views the signaling network of a swarm as a
-temporal, adaptive system whose topology co-evolves with the motion of the
-agents, coupling communication and control. Information constraints---a limited
-capacity $C$ and bandwidth $B$---bound the achievable performance and call for
-bandwidth-aware coordination and compression \cite{hamann2008space}.
+The network-theoretic perspective views the swarm signaling network (SSN), the
+channel through which behavioral information flows, as a temporal, adaptive
+network whose topology co-evolves with the motion of the agents, coupling
+communication and control. Like any real channel, it has a finite capacity $C$
+set by noise and bandwidth $B$, which bounds the achievable performance and calls
+for an information-theoretic view of swarm design \cite{bouffanais2016design}.
 \begin{itemize}
   \item \lead{Structural properties} Many biological and engineered swarms exhibit
         small-world traits---short paths and high clustering---which support the
-        fast and robust propagation of behavioral signals.
+        fast and robust propagation of behavioral signals, such as the very fast
+        evasive maneuvers of natural swarms.
   \item \lead{Network controllability} Analysis can identify the minimal set of
         driver agents needed to steer the swarm dynamics and can inform the
         placement of leaders, beacons, or gateway nodes.
@@ -578,7 +732,7 @@ behaviors and shared maps under tight resource constraints \cite{hamann2018swarm
 Scene understanding combines representation and data association to produce
 actionable context from on-board measurements. Three complementary levels of
 representation are common in swarms with heterogeneous payloads and different
-roles \cite{dias2021swarm}:
+roles \cite{chen2025survey}:
 \begin{itemize}
   \item \lead{Appearance level} Local and global visual features support state
         estimation and visual place recognition for lightweight localization.
@@ -591,6 +745,45 @@ roles \cite{dias2021swarm}:
   \item \lead{Output artifacts} Semantic local maps and scene graphs provide
         high-level constraints for distributed localization and cooperative
         planning.
+\end{itemize}
+
+\subsubsection{UAV Sensor Models for Target Tracking}
+
+\begin{itemize}
+  \item \lead{Direction-finding sensors} The most common choice for distributed
+        target tracking with UAV swarms; they typically fuse a photoelectric or
+        infrared imager with an ultrasonic or laser rangefinder to measure both
+        the range and the azimuth of the target \cite{lizzio2022review}.
+  \item \lead{Emitter localization} For radio sources, UAVs carry
+        time-difference-of-arrival (TDOA) receivers, and the configuration and
+        trajectories of the swarm are chosen with the Cram\'er--Rao lower bound
+        (CRLB) to improve the accuracy and stability of the estimate
+        \cite{wang2018optimal}.
+  \item \lead{Fusion for integrity} For relative navigation of several UAVs,
+        double-differenced GNSS pseudoranges have been fused with ultra-wideband
+        (UWB) ranging to detect and exclude faulty observations and improve
+        integrity monitoring \cite{sun2021autonomous}.
+  \item \lead{Chemical plume tracing} Quadcopters for plume tracing carry chemical
+        sensors to measure concentration and ultrasonic sensors to hold their
+        altitude, and the effect of the propellers on the chemical puffs has to
+        be accounted for \cite{tan2016handbook}.
+\end{itemize}
+
+\subsubsection{Acoustic Sensing for Mutual Identification}
+
+\begin{itemize}
+  \item \lead{Mutual acoustic identification} e-puck robots can detect the
+        presence of their neighbors with a single microphone, which lets them
+        identify one another without vision or dedicated ranging hardware
+        \cite{nemec2017mutual}.
+  \item \lead{Acoustic trilateration} A localization system based on acoustic
+        trilateration measures the time between an RF pulse and the matching
+        acoustic pulse on dedicated sensor boards, using transducers pointed down
+        at parabolic cones; it locates neighbors in 2-D without global
+        information and can be extended to 3-D \cite{sahin2007swarm}.
+  \item \lead{Ultrasonic sensors} Standard on many swarm robots for non-contact
+        obstacle detection, although their range is short (a few meters within
+        a narrow cone) \cite{tan2016handbook}.
 \end{itemize}
 
 %-----------------------------------------------------------------------------
@@ -647,7 +840,10 @@ systems and require Pareto reasoning or scalarization to balance conflicting
 objectives, such as the shortest time versus the lowest energy or the largest
 safety margin \cite{hamann2018swarm,nguyen2024swarm}.
 
-A representative cost function is
+The usual constraints are the robot's geometry, kinematics, and dynamics, the
+obstacles (collision-free motion is a hard constraint), and, in multi-robot
+missions, time windows for the tasks \cite{lin2022review}. A representative cost
+function is
 \begin{equation}
   J(\gamma) = \alpha_1 L(\gamma) + \alpha_2 T(\gamma) + \alpha_3 S(\gamma)
               + \alpha_4 E(\gamma),
@@ -695,7 +891,10 @@ time and, with minimal model assumptions, focus on obstacle avoidance and
 progress toward the goal. Reactive approaches such as artificial potential fields
 superimpose an attractive potential toward the goal and repulsive potentials
 around the obstacles, providing low-computation navigation; without enhancements,
-however, they suffer from local minima and oscillation \cite{bhowmick2024bio}.
+however, they suffer from local minima and oscillation and cannot guarantee
+convergence to the goal \cite{zhang2023multi,bhowmick2024bio}. When so little is
+known in advance that no path can be precomputed, the problem is sometimes
+called path \emph{finding} rather than path planning.
 
 The APF law takes the form
 \begin{equation}
@@ -724,6 +923,8 @@ throughput, especially when mission duration and battery budgets are tight.
 Smoothness is essential for nonholonomic platforms: B-spline or polynomial
 smoothing reduces curvature and jerk, so that actuator limits are respected and
 tracking errors in motion generation are reduced \cite{panigrahi2011handbook}.
+For multi-robot task allocation, efficiency is often measured by the makespan,
+the time the whole team needs to finish all tasks \cite{lin2022review}.
 
 \subsubsection{Maximizing Information Value in UAV Missions}
 
@@ -732,7 +933,9 @@ emphasize information value, revisit rate, and detection probability while
 respecting sensing and communication limits. In passive emitter localization,
 the waypoints are optimized to minimize the trace of the Cram\'er--Rao lower bound
 (CRLB), yielding favorable time-difference-of-arrival (TDOA) geometries for
-accurate estimates under range and angle constraints \cite{nguyen2024swarm}.
+accurate estimates under range and angle constraints \cite{wang2018optimal}.
+For persistent surveillance, a convenient objective is the maximum ``age'' of
+the cells, the time since each cell was last observed \cite{garcia2018comparison}.
 
 Information-driven planning balances observation quality against network
 constraints; decentralized model predictive control (MPC) formulations often
@@ -740,7 +943,7 @@ maximize the Fisher information or the joint entropy, subject to inter-UAV
 spacing constraints that keep communication reliable. CRLB-based planning
 constructs sets of waypoints that preserve the observability of the estimator and
 a bounded covariance, translating geometry directly into localization-accuracy
-objectives \cite{liu2018virtual,nguyen2024swarm}.
+objectives \cite{wang2018optimal,lizzio2022review}.
 
 \subsubsection{Reducing Computation Time and Energy Consumption}
 
@@ -750,12 +953,17 @@ Energy-oriented planning minimizes the propulsion and sensing/communication
 loads, while decentralized receding-horizon methods such as PSO reduce the
 solution time and scale to large numbers of agents \cite{panigrahi2011handbook,nguyen2024swarm}.
 
-Decentralized receding-horizon PSO planners have shown performance comparable to
-that of centralized methods with far less computation time, enabling on-board
-execution and rapid team replanning \cite{panigrahi2011handbook}. In dynamic environments,
-RRT-based replanners graft new segments near conflict regions instead of
-regenerating the whole path, preserving the optimal segments and reducing CPU
-time for rapid collision resolution during motion. ACO-style multi-objective
-planners for inspection and coverage tune parameters such as pheromone
-evaporation according to energy, achieving sustainability and lower total energy
-consumption in long missions \cite{bhowmick2024bio,nguyen2024swarm}.
+In a search over a $50 \times 50$~km area, a decentralized receding-horizon PSO
+planner did not quite match the centralized one but needed only half of its
+computation time, which favors on-board execution and rapid team replanning
+\cite{garcia2018comparison}. In dynamic environments, RRT-based replanners graft
+new waypoints near conflict regions instead of regenerating the whole path,
+preserving the rest of it and reducing computation time \cite{li2021rrt}. A
+multi-objective ACO planner for monitoring photovoltaic parks adjusts pheromone
+evaporation according to energy use; compared with a generic ACO, it reduced the
+travel time by 22\% on average and increased the inspection coverage by 28\%
+\cite{ziouzios2025energy}. Not every method scales this well: mixed-integer
+quadratic programs coordinate three-dimensional motion and collision avoidance
+for micro quadrotors but with fast-growing run times \cite{kushleyev2013towards},
+and distributed MPC carries a heavy computational load
+\cite{lizzio2022review}.
