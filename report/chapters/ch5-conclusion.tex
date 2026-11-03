@@ -1,5 +1,5 @@
 %=============================================================================
-\chapter{Summary and Conclusions}\label{chap:conclusion}
+\chapter{Summary, Conclusions, and Future Work}\label{chap:conclusion}
 %=============================================================================
 
 \section{Summary of Path Planning Approaches}\label{sec:summary}
@@ -36,7 +36,7 @@ strengths and compensate for the limitations of each. The goal is to produce
 solutions that are more robust, adaptive, and efficient in complex and dynamic
 environments. Studies show that hybrid approaches make up roughly 25\% of the
 reviewed path planning literature, which indicates an open research space for
-advancing the field.
+advancing the field \cite{abujabal2024path}.
 
 \subsection{Methodologies and Their Principles}
 
@@ -164,3 +164,151 @@ computational intelligence.
         through simple interpolation of the optimal path and preserves
         scalability in obstacle-rich environments.
 \end{itemize}
+
+%-----------------------------------------------------------------------------
+\section{Future Research Directions}\label{sec:future}
+
+Future research must give swarms the means to handle increasingly complex tasks
+in uncertain, dynamic, real-world environments, mainly through better control,
+learning, and interaction mechanisms
+\cite{bhowmick2024bio,kegeleirs2025towards}.
+
+\subsection{Advanced Control and Learning Strategies}
+
+\subsubsection{Adaptive Learning and Self-Organization}
+
+\begin{itemize}
+  \item \lead{Learning from experience} Swarm robots should learn from their own
+        experience and adapt their behavior to changes in the environment and in
+        the task, which requires learning methods tailored to swarms rather than
+        borrowed from single robots \cite{bhowmick2024bio,kuckling2023recent}.
+  \item \lead{Robust decentralized coordination} Coordination strategies must stay
+        robust under model uncertainty and sensor noise, and self-organizing
+        behaviors should let the swarm reconfigure quickly when the mission
+        changes \cite{kuckling2023recent}.
+  \item \lead{Scalable learning} Multi-agent reinforcement learning has to cope
+        with joint action spaces that grow exponentially with the number of
+        robots; representations that are invariant to the number and order of
+        neighbors are one answer \cite{huttenrauch2019deep}.
+  \item \lead{Hybridization} Combining swarm metaheuristics (GA, PSO, ACO) with
+        one another and with learned models is a promising way to keep their
+        strengths and remove their weaknesses \cite{seebacher2025collective}.
+\end{itemize}
+
+\subsubsection{Evolved Controllers and Gene Regulatory Networks}
+
+Evolutionary robotics automates controller design by evolving, for instance, the
+weights and topology of neural networks, and it remains a main route to adaptive
+swarm behaviors \cite{kuckling2023recent}. A more specialized direction uses
+gene regulatory networks (GRNs) as controllers: robots driven by evolved,
+hierarchical GRNs have aggregated into larger organisms whose configuration
+adapts to a changing environment, with mutation and duplication operators
+improving that adaptability \cite{bhowmick2024bio}. Genetic algorithms and
+genetic programming can also search for control strategies that suit a
+particular mission \cite{kuckling2023recent}.
+
+\subsection{Human--Swarm Interaction}
+
+Even autonomous swarms need human supervision when objectives are complex or
+change during the mission \cite{kolling2016human}.
+\begin{itemize}
+  \item \lead{Why humans stay in the loop} Operators can spot and mitigate
+        shortcomings of the autonomy, bring in information the robots cannot
+        sense, and change the mission intent \cite{kolling2016human}.
+  \item \lead{Cognitive complexity} The goal is $O(1)$ control, where the
+        operator's effort does not grow with the number of robots; measuring it
+        properly requires notions of complexity that also account for task
+        difficulty and the level of automation
+        \cite{kolling2016human,hart2004reducing}.
+  \item \lead{Levels of automation and neglect benevolence} Swarm interfaces sit
+        high on the scale of automation. Because swarm dynamics take time to
+        unfold, an operator may need to wait before a command can succeed, a
+        property called neglect benevolence (the converse of neglect tolerance);
+        predictive displays that show the effect of a command before it is given
+        help with this \cite{kolling2016human}.
+  \item \lead{Interfaces} Haptic feedback about nearby obstacles improves operator
+        performance, especially combined with visual feedback; how to visualize
+        noisy or partially observed swarm states remains open
+        \cite{kolling2016human}. Brain--machine interfaces have also been
+        proposed for human--swarm collaboration \cite{bhowmick2024bio}.
+  \item \lead{Shared control} Blending operator commands with the robots'
+        autonomy, so that the system asks for help only when needed, is an
+        effective way to reduce the operator's burden \cite{kolling2016human}.
+\end{itemize}
+
+\subsection{Hardware and Simulation}
+
+\subsubsection{Miniaturization and Sensing}
+
+Smaller, cheaper, and more capable robots would make large swarms practical.
+Accurate, noise-robust low-cost sensors, richer sensor combinations (cameras,
+LiDAR, acoustic, and chemical sensors), and radios with time-of-flight ranging
+for relative localization are all needed, and batteries remain too large for the
+smallest platforms \cite{kegeleirs2025towards,tan2013research}.
+
+\subsubsection{Simulation Platforms and the Reality Gap}
+
+Simulation is indispensable because large physical experiments are slow and
+expensive. Kilogrid extends Kilobot experiments with a virtual environment, the
+Pi-puck extension adds a single-board computer to the e-puck, and ARGoS
+simulates thousands of robots faster than real time
+\cite{dias2021swarm,kegeleirs2025towards}. Controllers designed in simulation
+must survive the transfer to real robots, which calls for a hierarchy of models
+of increasing fidelity and for measurements of real swarms to calibrate the
+simulators \cite{kuckling2023recent,hamann2018swarm}.
+
+\subsubsection{Three-Dimensional and Denser Swarms}
+
+Aerial platforms remove the planar restriction of most earlier work and bring
+swarms closer to bird flocks and fish schools, but 3-D sensing, communication,
+and control are harder, distributed 3-D localization is still needed, and the
+formation flight of large UAV swarms is far from solved
+\cite{kushleyev2013towards,tan2013research}.
+
+\subsection{Ethics and Societal Impact}
+
+As swarms leave the laboratory, their safety around people, the privacy of the
+data they collect, algorithmic bias, and the accountability for decisions taken
+by a decentralized system become pressing questions. Privacy-preserving
+techniques such as federated learning, clear rules on data retention, and
+transparent descriptions of what a swarm can do are part of a responsible
+deployment, together with international norms that prevent misuse
+\cite{seebacher2025collective,bhowmick2024bio}.
+
+\subsection{Dynamic Formation Generation and Route Planning}
+
+Generating formation patterns on the fly and planning routes in unknown
+environments are named as open directions in formation control
+\cite{liu2018virtual,liu2018decentralization}. Without a prior map, planning must
+rely on on-board sensing, and swarm data could feed highly dynamic maps that
+narrow the gap between map-based and purely reactive planning
+\cite{tan2016handbook}. Multilevel topologies (\cref{sec:control-architectures})
+and virtual linkages, which reshape a formation by changing a few joint angles,
+are natural building blocks for formations that change with the environment
+\cite{tan2016handbook,liu2018virtual}.
+
+\subsection{Sensing-Aware Planning}
+
+\begin{itemize}
+  \item \lead{Information-driven UAV paths} Choosing waypoints that minimize the
+        CRLB turns path planning into a constrained nonlinear program, solved for
+        example with interior penalty methods; the determinant of the Fisher
+        information matrix plays the same role for received-signal-strength
+        localization. In simulation, four UAVs located both static and moving
+        emitters this way \cite{wang2018optimal}.
+  \item \lead{Coverage with complex detectors} Coverage with extended-range
+        detectors uses the generalized Voronoi diagram to handle narrow regions
+        \cite{acar2006sensor}, and heterogeneous swarms covering non-convex areas
+        under visibility constraints remain an active topic
+        \cite{breitenmoser2010voronoi}.
+\end{itemize}
+
+\subsection{Multi-Objective Planning and Constraint Handling}
+
+Real missions combine conflicting objectives, such as time, energy, and safety,
+so planners should return Pareto sets rather than single answers. MOPSO
+(\cref{sec:bio-inspired}) generates a set of non-dominated solutions in one run,
+and constraint-handling schemes such as the penalty mechanism of CAMOPSO, which
+lets marginally infeasible solutions return to the feasible region, deserve
+further study on constrained problems; fuzzy decision-making can then pick a
+compromise from the front \cite{panigrahi2011handbook}.
